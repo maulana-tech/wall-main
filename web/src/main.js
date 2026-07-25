@@ -22,10 +22,23 @@ const ERC20_ABI = [
 let CFG = null, ME = null, notes = [], log = [], history = [], localHist = [];
 let view = "landing", sheet = null;
 let tab = "portfolio";
+let lendTab = "lend"; // lend | borrow | liquidate
 let asset = 1, proving = false, revealBalance = false, reveals = new Set();
 let discCanvas = null, disc = null, heartbeat = 0;
 let fr = null; // { address, signer, provider, noxClient }
 let prices = { eurUsd: 1.08 };
+let mktBusy = false;
+let mktSheetData = null; // { assetId, positionId } for market sheet operations
+
+// Market state
+let mkt = {
+  stats: {}, // { [assetId]: { reserve, supplied, borrowed, supplyApy, borrowApy } }
+  positions: {}, // { [assetId]: { positionId, collateral, debt } }
+  myPositions: [], // [{ positionId, assetId, collateral, debt, owner }]
+  loadedAt: 0,
+  loading: false,
+  err: null,
+};
 
 // ---------- amount helpers ----------
 const assetById = (id) => (CFG?.assets || []).find((a) => Number(a.id) === Number(id));
@@ -283,6 +296,123 @@ async function fetchPrices() {
   } catch { /* keep fallback */ }
 }
 
+// ---------- faucet ----------
+async function mintFaucet() {
+  if (!fr) { toast("Connect MetaMask first"); return; }
+  try {
+    const res = await fetch(`${API_BASE}/api/faucet?to=${fr.address}`);
+    const j = await res.json();
+    if (!j.ok) throw new Error(j.error);
+    toast("Minted 1000 USDC + 1000 EURC");
+  } catch (e) { toast(e.message || "faucet failed"); }
+}
+
+// ---------- market ----------
+const MARKET_ABI = [
+  "function positions(uint256) view returns (bytes32, bytes32, address, uint256, uint256)",
+  "function nextPositionId() view returns (uint256)",
+];
+const mDec = (id) => (CFG?.marketAssets || CFG?.assets || []).find((a) => Number(a.id) === Number(id))?.decimals ?? 7;
+const mSym = (id) => (CFG?.marketAssets || CFG?.assets || []).find((a) => Number(a.id) === Number(id))?.symbol || `#${id}`;
+const marketAssets = () => CFG?.marketAssets || CFG?.assets || [];
+
+async function marketRefresh() {
+  if (!CFG?.market || !fr?.provider) return;
+  mkt.loading = true; mkt.err = null;
+  try {
+    const market = new ethers.Contract(CFG.market, MARKET_ABI, fr.provider);
+    const nextId = Number(await market.nextPositionId());
+    const myPos = [];
+    for (let i = 1; i < nextId; i++) {
+      try {
+        const [collateral, debt, owner, assetId, healthFactor] = await market.positions(i);
+        if (owner.toLowerCase() === fr.address.toLowerCase()) {
+          myPos.push({ positionId: i, collateral: BigInt(collateral), debt: BigInt(debt), owner, assetId: Number(assetId), healthFactor: Number(healthFactor) });
+        }
+      } catch { /* skip */ }
+    }
+    mkt.myPositions = myPos;
+    mkt.loadedAt = Date.now();
+  } catch (e) { mkt.err = e.message || String(e); }
+  mkt.loading = false;
+  if (ME && tab === "lending") render();
+}
+
+async function submitMarket(action, data) {
+  const url = `${API_BASE}/api/market`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action, ...data }),
+  });
+  const j = await res.json();
+  if (!j.ok) throw new Error(j.error || "market rejected");
+  return j.txHash;
+}
+
+async function openMarketPosition(assetId) {
+  if (mktBusy) return;
+  mktBusy = true; proving = true; render();
+  try {
+    const txHash = await submitMarket("openPosition", { assetId: String(assetId) });
+    toast("Position opened");
+    await marketRefresh();
+  } catch (e) { toast(e.message || "failed"); }
+  mktBusy = false; proving = false; render();
+}
+
+async function supplyToMarket(positionId, amount, assetId) {
+  if (mktBusy) return;
+  mktBusy = true; proving = true; render();
+  try {
+    const { handle, proof } = await encryptAmount(amount);
+    const tokenAddr = assetId === 1 ? CFG.usdc : CFG.eurc;
+    await approveERC20(tokenAddr, CFG.market, amount, fr.signer);
+    const txHash = await submitMarket("supply", {
+      positionId: String(positionId),
+      handle: ethers.hexlify(handle),
+      handleProof: ethers.hexlify(proof),
+    });
+    toast("Supplied to market");
+    await marketRefresh();
+  } catch (e) { toast(e.message || "failed"); }
+  mktBusy = false; proving = false; render();
+}
+
+async function borrowFromMarket(positionId, amount, assetId) {
+  if (mktBusy) return;
+  mktBusy = true; proving = true; render();
+  try {
+    const { handle, proof } = await encryptAmount(amount);
+    const txHash = await submitMarket("borrow", {
+      positionId: String(positionId),
+      handle: ethers.hexlify(handle),
+      handleProof: ethers.hexlify(proof),
+    });
+    toast("Borrowed from market");
+    await marketRefresh();
+  } catch (e) { toast(e.message || "failed"); }
+  mktBusy = false; proving = false; render();
+}
+
+async function repayToMarket(positionId, amount, assetId) {
+  if (mktBusy) return;
+  mktBusy = true; proving = true; render();
+  try {
+    const { handle, proof } = await encryptAmount(amount);
+    const tokenAddr = assetId === 1 ? CFG.usdc : CFG.eurc;
+    await approveERC20(tokenAddr, CFG.market, amount, fr.signer);
+    const txHash = await submitMarket("repay", {
+      positionId: String(positionId),
+      handle: ethers.hexlify(handle),
+      handleProof: ethers.hexlify(proof),
+    });
+    toast("Repaid to market");
+    await marketRefresh();
+  } catch (e) { toast(e.message || "failed"); }
+  mktBusy = false; proving = false; render();
+}
+
 // ============================ rendering ============================
 const brand = `<div class="brand"><img class="brand-logo" src="/logo.png" alt="" aria-hidden="true"/>Wall</div>`;
 function placeDisc() {}
@@ -355,13 +485,16 @@ function wireConnect() {
 }
 
 // ---- home ----
-const TABS = [["portfolio", "Portfolio"], ["swap", "Swap"], ["lending", "Lending"]];
+const TABS = [["portfolio", "Portfolio"], ["lending", "Lending"]];
 function homeView() {
   let heroUsd = totalUsd();
+  let panel = portfolioPanel();
+  if (tab === "lending") panel = lendingPanel();
   return `<div class="screen home">
     <header class="bar">
       ${brand}
       <div class="bar-r">
+        <button class="chip" id="faucet-btn" title="Get test tokens">🚰</button>
         <button class="chip" id="copyaddr" title="copy your address">${esc(short(ME?.address, 5))}</button>
         <button class="icon-btn" id="disconnect" title="disconnect" aria-label="disconnect">⏻</button>
       </div>
@@ -377,8 +510,65 @@ function homeView() {
     <nav class="tabs">
       ${TABS.map(([k, label]) => `<button class="tab ${tab === k ? "on" : ""}" data-tab="${k}">${label}</button>`).join("")}
     </nav>
-    ${portfolioPanel()}
+    ${panel}
   </div>`;
+}
+
+function lendingPanel() {
+  const subTabs = [["lend", "Supply"], ["borrow", "Borrow"], ["positions", "My Positions"]];
+  const subnav = `<nav class="subtabs">${subTabs.map(([k, l]) => `<button class="subtab ${lendTab === k ? "on" : ""}" data-lendtab="${k}">${l}</button>`).join("")}</nav>`;
+
+  if (lendTab === "positions") return `<div class="panel">${subnav}${positionsPanel()}</div>`;
+  if (lendTab === "borrow") return `<div class="panel">${subnav}${borrowPanel()}</div>`;
+  return `<div class="panel">${subnav}${supplyPanel()}</div>`;
+}
+
+function supplyPanel() {
+  const assets = marketAssets();
+  return assets.map((a) => {
+    const hasPos = mkt.myPositions.some((p) => p.assetId === a.id);
+    return `<div class="hrow" style="padding:12px 0;border-bottom:1px solid rgba(128,128,128,0.15)">
+      <span class="hico">${esc(a.symbol[0])}</span>
+      <span class="hrow-main"><span class="hsym">${esc(a.symbol)}</span><span class="muted small"> supply to market</span></span>
+      <div class="lp-btns">
+        <button class="lp-b" data-mktsupply="${a.id}">Supply</button>
+        ${!hasPos ? `<button class="lp-b ghost" data-mktopen="${a.id}">Open Position</button>` : ""}
+      </div>
+    </div>`;
+  }).join("") + `<p class="panel-note" style="margin-top:12px">Supply USDC or EURC to the lending market. You earn interest from borrowers. Amounts are encrypted via Nox TEE.</p>`;
+}
+
+function borrowPanel() {
+  const positions = mkt.myPositions;
+  if (!positions.length) return `<p class="empty" style="padding:20px">Open a position first in the Supply tab.</p>`;
+  return positions.map((p) => {
+    const sym = mSym(p.assetId);
+    return `<div class="hrow" style="padding:12px 0;border-bottom:1px solid rgba(128,128,128,0.15)">
+      <span class="hrow-main"><span class="hsym">Position #${p.positionId}</span><span class="muted small"> ${esc(sym)} collateral</span></span>
+      <div class="lp-btns">
+        <button class="lp-b" data-mktborrow="${p.positionId}">Borrow</button>
+        ${p.debt > 0n ? `<button class="lp-b ghost" data-mktrepay="${p.positionId}">Repay</button>` : ""}
+      </div>
+    </div>`;
+  }).join("") + `<p class="panel-note" style="margin-top:12px">Borrow against your supplied collateral. Encrypted via Nox TEE.</p>`;
+}
+
+function positionsPanel() {
+  const positions = mkt.myPositions;
+  if (!positions.length) return `<p class="empty" style="padding:20px">No positions yet. Open one in the Supply tab.</p>`;
+  return positions.map((p) => {
+    const sym = mSym(p.assetId);
+    const health = p.healthFactor > 0 ? (p.healthFactor / 100).toFixed(2) : "—";
+    return `<div class="hrow" style="padding:12px 0;border-bottom:1px solid rgba(128,128,128,0.15)">
+      <span class="hrow-main">
+        <span class="hsym">Position #${p.positionId}</span>
+        <span class="muted small"> ${esc(sym)} · health ${esc(health)}</span>
+      </span>
+      <div class="lp-btns">
+        <button class="lp-b" data-mktsupply="${p.assetId}" data-posid="${p.positionId}">Add Collateral</button>
+      </div>
+    </div>`;
+  }).join("") + `<p class="panel-note" style="margin-top:12px">Your lending positions. Each is linked to a position on the WallMarket contract.</p>`;
 }
 
 function portfolioPanel() {
@@ -432,9 +622,24 @@ function activityRow(e) {
 function wireHome() {
   placeDisc();
   $("#disconnect").onclick = disconnect;
+  const faucet = $("#faucet-btn"); if (faucet) faucet.onclick = mintFaucet;
   $("#copyaddr").onclick = () => { navigator.clipboard?.writeText(ME.address); toast("Address copied"); };
-  document.querySelectorAll(".tab[data-tab]").forEach((b) => b.onclick = () => { tab = b.dataset.tab; render(); });
+  document.querySelectorAll(".tab[data-tab]").forEach((b) => b.onclick = () => { tab = b.dataset.tab; if (tab === "lending") marketRefresh(); render(); });
+  document.querySelectorAll(".subtab[data-lendtab]").forEach((b) => b.onclick = () => { lendTab = b.dataset.lendtab; render(); });
   document.querySelectorAll(".act").forEach((b) => b.onclick = () => { sheet = b.dataset.sheet; render(); });
+
+  // Market actions
+  document.querySelectorAll("[data-mktopen]").forEach((b) => b.onclick = () => openMarketPosition(Number(b.dataset.mktopen)));
+  document.querySelectorAll("[data-mktsupply]").forEach((b) => b.onclick = () => {
+    const posId = Number(b.dataset.posid) || 0;
+    sheet = "mkt-supply"; mktSheetData = { assetId: Number(b.dataset.mktsupply), positionId: posId }; render();
+  });
+  document.querySelectorAll("[data-mktborrow]").forEach((b) => b.onclick = () => {
+    sheet = "mkt-borrow"; mktSheetData = { positionId: Number(b.dataset.mktborrow) }; render();
+  });
+  document.querySelectorAll("[data-mktrepay]").forEach((b) => b.onclick = () => {
+    sheet = "mkt-repay"; mktSheetData = { positionId: Number(b.dataset.mktrepay) }; render();
+  });
 }
 
 // ---- sheets ----
@@ -443,7 +648,21 @@ function sheetView() {
   const sel = assets.length > 1 ? `<label class="lbl">Asset</label><div class="seg">${assets.map((a) => `<button class="seg-b ${a.id === asset ? "on" : ""}" data-sasset="${a.id}">${esc(a.symbol)}</button>`).join("")}</div>` : "";
   const amount = `<label class="lbl">Amount</label><input id="s-amt" class="field" inputmode="decimal" placeholder="0.0" autocomplete="off"/>`;
   let title, body, btn, hint;
-  if (sheet === "send") {
+
+  if (sheet === "mkt-supply") {
+    const a = assets.find((x) => x.id === mktSheetData?.assetId) || assets[0];
+    title = `Supply ${a?.symbol || ""}`; btn = "Supply";
+    hint = "Supply tokens to your lending position. Encrypted via Nox.";
+    body = `${amount}<button class="btn primary" id="s-go">${btn}</button>`;
+  } else if (sheet === "mkt-borrow") {
+    title = "Borrow"; btn = "Borrow";
+    hint = "Borrow against your supplied collateral.";
+    body = `${amount}<button class="btn primary" id="s-go">${btn}</button>`;
+  } else if (sheet === "mkt-repay") {
+    title = "Repay"; btn = "Repay";
+    hint = "Repay your outstanding debt.";
+    body = `${amount}<button class="btn primary" id="s-go">${btn}</button>`;
+  } else if (sheet === "send") {
     title = "Send in shadow"; btn = "Send";
     hint = "Amount and recipient stay hidden on-chain.";
     body = `${sel}<label class="lbl">Recipient</label><input id="s-addr" class="field mono" placeholder="Ethereum address (0x…)" autocomplete="off"/>${amount}`;
@@ -483,6 +702,24 @@ function wireSheet() {
   $("#s-cancel").onclick = () => { sheet = null; render(); };
   document.querySelectorAll(".seg-b").forEach((b) => b.onclick = () => { asset = Number(b.dataset.sasset); render(); });
   const copy = $("#s-copy"); if (copy) copy.onclick = () => { navigator.clipboard?.writeText(ME.address); copy.textContent = "Copied"; };
+
+  // Market sheets
+  if (sheet === "mkt-supply" || sheet === "mkt-borrow" || sheet === "mkt-repay") {
+    const goBtn = $("#s-go");
+    if (goBtn) goBtn.onclick = async () => {
+      let amt; try { amt = toRaw($("#s-amt").value || "0", 7); } catch (e) { return toast(e.message); }
+      if (amt <= 0n) return toast("Enter an amount");
+      if (sheet === "mkt-supply") {
+        await supplyToMarket(mktSheetData.positionId, amt, mktSheetData.assetId);
+      } else if (sheet === "mkt-borrow") {
+        await borrowFromMarket(mktSheetData.positionId, amt, mktSheetData.assetId);
+      } else if (sheet === "mkt-repay") {
+        await repayToMarket(mktSheetData.positionId, amt, mktSheetData.assetId);
+      }
+      sheet = null; render();
+    };
+    return;
+  }
 
   // MetaMask deposit
   const conn = $("#fr-connect"); if (conn) conn.onclick = async () => { try { await doConnectMetaMask(); } catch (e) { toast(e.message || "connect failed"); } };

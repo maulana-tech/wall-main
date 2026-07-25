@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 
 const ROOT = path.join(__dirname, "..");
-const B = path.join(ROOT, "circuits/build");
+const CONFIG_PATH = path.join(ROOT, "api", "config.json");
 
 const POOL_ABI = [
   "function admin() external view returns (address)",
@@ -77,12 +77,12 @@ async function deploy() {
     chainId: (await provider.getNetwork()).chainId.toString(),
   };
 
-  fs.mkdirSync(B, { recursive: true });
+  fs.mkdirSync(path.dirname(CONFIG_PATH), { recursive: true });
   fs.writeFileSync(
-    path.join(B, "web_config.json"),
+    CONFIG_PATH,
     JSON.stringify(config, null, 2)
   );
-  console.log("Config saved to:", path.join(B, "web_config.json"));
+  console.log("Config saved to:", CONFIG_PATH);
 
   return config;
 }

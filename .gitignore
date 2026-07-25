@@ -13,6 +13,7 @@ broadcast/
 *.wtns
 *.wasm
 build/
+!circuits/build/web_config.json
 
 # Environment
 .env
