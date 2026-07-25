@@ -1,0 +1,61 @@
+/* ============================================================================
+   UMBRA — design tokens (editorial / dictionary direction)
+   Reference: warm cream paper + charcoal ink + a dramatic high-contrast serif.
+   "umbra — the fully shaded inner region of a shadow." Monochrome and literary;
+   the ONE accent (aged gold) is the light that breaks through — used only for the
+   revealed balance and the auditor's disclosure, never decoratively.
+   ============================================================================ */
+:root {
+  /* — Paper: warm cream backgrounds & surfaces — */
+  --paper: #ece5d3; /* main page — aged cream */
+  --paper-2: #e5dcc6; /* raised: cards, sheets */
+  --paper-3: #dbd1b8; /* pressed / deeper edge */
+
+  /* — Ink: charcoal text — */
+  --ink: #1c1a14; /* primary — near-black, warm */
+  --ink-soft: #4a4537; /* secondary text */
+  --ink-faint: #8d8670; /* tertiary / phonetics / placeholders */
+  --line: #d0c7ae; /* hairlines, borders */
+  --line-soft: #ddd4bd; /* faint dividers */
+
+  /* — The one accent: aged gold = light / disclosure — */
+  --accent: #a87e36; /* revealed value, key emphasis */
+  --accent-deep: #876326; /* hover / pressed */
+  --accent-wash: #e8dcbd; /* faint gold-tinted surface (auditor panel) */
+
+  /* — Semantic — */
+  --danger: #9a3b2a; /* a warm oxblood, not a clashing red */
+  --scrim: rgba(28, 26, 20, 0.42); /* sheet backdrop */
+
+  /* — Type — */
+  --font-display: "Bodoni Moda", "Didot", "Playfair Display", Georgia, serif;
+  --font-ui: "Mulish", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "Geist Mono", "IBM Plex Mono", ui-monospace, Menlo, monospace;
+
+  --t-display: clamp(3.4rem, 16vw, 5rem); /* the umbra/balance headline */
+  --t-title: clamp(2rem, 8vw, 2.6rem);
+  --t-h: 1.2rem;
+  --t-body: 1rem;
+  --t-md: 0.98rem;
+  --t-sm: 0.875rem;
+  --t-xs: 0.76rem;
+
+  /* — Spacing / radius (editorial = restrained, near-square) — */
+  --gap: 16px;
+  --pad: 22px;
+  --r-sm: 6px;
+  --r: 10px;
+  --r-lg: 16px;
+  --r-pill: 999px;
+
+  /* — Motion — */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 130ms;
+  --dur: 260ms;
+  --dur-slow: 560ms;
+
+  /* — Elevation (soft, like ink on paper) — */
+  --shadow-card: 0 16px 40px -26px rgba(40, 34, 18, 0.5);
+  --shadow-sheet: 0 -18px 50px -30px rgba(40, 34, 18, 0.55);
+}

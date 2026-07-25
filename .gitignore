@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+
+# Foundry
+lib/
+out/
+cache/
+broadcast/
+
+# Build artifacts
+*.zkey
+*.ptau
+*.wtns
+*.wasm
+build/
+
+# Environment
+.env
+identity.txt
+
+# Web
+web/dist/
+dist/
+.vercel
+
+# Extension
+extension/dist/
+extension/*.zip
+
+# Circuit artifacts (keep served files)
+!web/public/transfer.wasm
+!web/public/transfer_final.zkey
+!web/public/swap.wasm
+!web/public/swap_final.zkey
+web/public/DA.jpg
