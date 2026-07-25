@@ -98,11 +98,11 @@ export async function transferInPool(poolAddress, to, handle, proof, assetId, si
 // ---------- Event scanning ----------
 export async function scanPoolEvents(poolAddress, provider, fromBlock, toBlock) {
   const pool = new ethers.Contract(poolAddress, POOL_ABI, provider);
-  const [deposits, withdrawals, transfers] = await Promise.all [
+  const [deposits, withdrawals, transfers] = await Promise.all([
     pool.queryFilter(pool.filters.Deposited(), fromBlock, toBlock),
     pool.queryFilter(pool.filters.Withdrawn(), fromBlock, toBlock),
     pool.queryFilter(pool.filters.Transferred(), fromBlock, toBlock),
-  ];
+  ]);
   return { deposits, withdrawals, transfers };
 }
 
