@@ -1,4 +1,4 @@
-// Headless smoke test for the Umbra wallet: landing renders with the umbral disc,
+// Headless smoke test for the Wall wallet: landing renders with the Walll disc,
 // the Create flow reaches the home screen with disc + quick actions, no runtime
 // errors. Prereqs: relayer (npm run web:server) + a server on :5173 (vite preview).
 const puppeteer = require("puppeteer-core");

@@ -46,7 +46,7 @@ User (browser)                Relayer              Contracts (Sepolia)
 - **Tradeoff** — requires trust in the TEE; not trustless like ZK. Good for regulated/compliant privacy.
 
 ### Hackathon learnings
-- Starting from an existing codebase (Umbra on Stellar) and migrating to ETH + Nox was faster than building from scratch
+- Starting from an existing codebase (Wall on Stellar) and migrating to ETH + Nox was faster than building from scratch
 - Foundry's `forge build` with `--use 0.8.35` is required for Nox contracts (they need Solidity ^0.8.35)
 - The Nox compute contract addresses are chain-specific — Sepolia requires the exact address from `Nox.sol`
 - `persistTransientHandle` reverts in constructors — use lazy initialization instead

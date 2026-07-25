@@ -1,7 +1,7 @@
 /* ============================================================================
-   UMBRA — design tokens (editorial / dictionary direction)
+   Wall — design tokens (editorial / dictionary direction)
    Reference: warm cream paper + charcoal ink + a dramatic high-contrast serif.
-   "umbra — the fully shaded inner region of a shadow." Monochrome and literary;
+   "Wall — the fully shaded inner region of a shadow." Monochrome and literary;
    the ONE accent (aged gold) is the light that breaks through — used only for the
    revealed balance and the auditor's disclosure, never decoratively.
    ============================================================================ */
@@ -32,7 +32,7 @@
   --font-ui: "Mulish", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: "Geist Mono", "IBM Plex Mono", ui-monospace, Menlo, monospace;
 
-  --t-display: clamp(3.4rem, 16vw, 5rem); /* the umbra/balance headline */
+  --t-display: clamp(3.4rem, 16vw, 5rem); /* the Wall/balance headline */
   --t-title: clamp(2rem, 8vw, 2.6rem);
   --t-h: 1.2rem;
   --t-body: 1rem;
