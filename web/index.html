@@ -1,227 +1,26 @@
-<!DOCTYPE html>
-<html lang="en" class="dark">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wall — Private Money on Ethereum</title>
-  <link rel="icon" href="/images/logo.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/src/landing.css" />
-  <link rel="stylesheet" href="/src/wallet.css" />
-</head>
-<body>
-  <!-- ═══════════ LANDING ═══════════ -->
-  <div id="landing" class="landing-root">
-
-    <!-- ─── Hero ─── -->
-    <section class="hero-section" id="hero-section">
-      <!-- Fluid background (CSS fallback) -->
-      <div class="hero-fluid"></div>
-
-      <!-- Film grain -->
-      <div class="hero-grain"></div>
-
-      <!-- Chart grid (trading chart lines) -->
-      <div class="chart-grid" id="chart-grid"></div>
-
-      <!-- Dark overlay gradient -->
-      <div class="hero-gradient"></div>
-
-      <!-- Header -->
-      <header class="hero-header">
-        <a href="/" class="hero-logo">
-          <img src="/images/logo.png" alt="Wall" width="36" height="36" />
-          <span class="hero-logo-text">Wall</span>
-        </a>
-        <nav class="hero-nav">
-          <a href="https://github.com/maulana-tech/wall-main" target="_blank" class="hero-nav-link">GitHub</a>
-          <button class="hero-nav-link hero-enter" id="btn-create-nav">Enter →</button>
-        </nav>
-      </header>
-
-      <!-- Hero content -->
-      <div class="hero-content">
-        <h1 class="hero-title">
-          <span class="hero-line"><span class="hero-word">private</span> <span class="hero-word">money</span></span>
-          <span class="hero-line"><span class="hero-word">that</span> <span class="hero-word">stays</span></span>
-          <span class="hero-line hero-scramble-line">
-            <span class="hero-scramble" id="scramble"></span>
-          </span>
-        </h1>
-        <span class="hero-scroll">scroll</span>
-      </div>
-
-      <!-- Transition gradient to story -->
-      <div class="hero-transition"></div>
-    </section>
-
-    <!-- ─── Story ─── -->
-    <section class="story-section">
-      <!-- Grain overlay -->
-      <div class="story-grain"></div>
-
-      <div class="story-inner">
-        <!-- Intro label -->
-        <div class="story-label">
-          <span>public ledger</span>
-          <span class="story-label-sep">→</span>
-          <span>encrypted pool</span>
-          <span class="story-label-sep">→</span>
-          <span>Nox TEE</span>
-        </div>
-
-        <!-- Heading -->
-        <h2 class="story-heading">
-          public chains remember everything.
-          <span class="story-heading-muted">the encrypted layer forgets.</span>
-        </h2>
-
-        <!-- Three narrative cards -->
-        <div class="story-cards">
-          <div class="story-card">
-            <div class="story-card-grid">
-              <div class="story-card-visual">
-                <img src="/assets/hourglass.webp" alt="" class="story-card-img" />
-              </div>
-              <div class="story-card-text">
-                <div class="story-card-meta">
-                  <span class="story-card-n">01</span>
-                  <span class="story-card-label">public ledger</span>
-                  <span class="story-card-coord">[ every block · forever ]</span>
-                </div>
-                <h3>every chain is an open diary.</h3>
-                <p>every transaction, balance, and counterparty on a public chain is permanent, linkable, and readable by anyone — forever. the ledger never forgets.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="story-card">
-            <div class="story-card-grid story-card-grid-flip">
-              <div class="story-card-visual">
-                <img src="/assets/balance.webp" alt="" class="story-card-img" />
-              </div>
-              <div class="story-card-text">
-                <div class="story-card-meta">
-                  <span class="story-card-n">02</span>
-                  <span class="story-card-label">encrypted</span>
-                  <span class="story-card-coord">[ Nox · euint256 ]</span>
-                </div>
-                <h3>the encrypted layer forgets.</h3>
-                <p>deposit into Wall and your balance becomes an encrypted handle — an <code>euint256</code> inside a TEE. amount and owner stay inside the enclave; only you hold the decryption key.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="story-card">
-            <div class="story-card-grid">
-              <div class="story-card-visual">
-                <img src="/assets/cube.webp" alt="" class="story-card-img" />
-              </div>
-              <div class="story-card-text">
-                <div class="story-card-meta">
-                  <span class="story-card-n">03</span>
-                  <span class="story-card-label">auditable</span>
-                  <span class="story-card-coord">[ ACL · selective disclosure ]</span>
-                </div>
-                <h3>the TEE is the lock.</h3>
-                <p>every move is computed inside Nox's trusted execution environment. an auditor can decrypt via ACL — but only with your permission. no leak, no link, no trace.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ─── Features (on cream) ─── -->
-    <section class="features-section">
-      <div class="features-inner">
-        <div class="bento-grid">
-          <a href="#/pool" class="bento-card" id="feat-pool">
-            <div class="bento-title">Confidential Pool</div>
-            <p class="bento-desc">deposit, withdraw, and transfer with encrypted balances. only you see your amount.</p>
-            <span class="bento-link">open →</span>
-          </a>
-          <a href="#/market" class="bento-card" id="feat-market">
-            <div class="bento-title">Confidential Market</div>
-            <p class="bento-desc">lend and borrow with encrypted positions. rates are public, balances are not.</p>
-            <span class="bento-link">open →</span>
-          </a>
-          <a href="#/auditor" class="bento-card" id="feat-auditor">
-            <div class="bento-title">Auditor Disclosure</div>
-            <p class="bento-desc">selective disclosure via Nox ACL. prove solvency without revealing user data.</p>
-            <span class="bento-link">open →</span>
-          </a>
-          <div class="bento-card bento-card-info">
-            <div class="bento-title">ETH Sepolia</div>
-            <p class="bento-desc">deployed and verified on Ethereum Sepolia testnet. real contracts, real encryption.</p>
-            <span class="bento-link">0x295e…418C</span>
-          </div>
-        </div>
-
-        <!-- CTA -->
-        <div class="story-cta">
-          <button class="cta-btn" id="btn-create">enter the encrypted layer →</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ─── Footer ─── -->
-    <footer class="landing-footer">
-      <div class="footer-grain"></div>
-      <div class="footer-inner">
-        <div class="footer-top">
-          <p class="footer-tagline">
-            feel free to reach out if you want a privacy wallet on Ethereum — or simply have a chat.
-          </p>
-          <a href="/" class="footer-logo">
-            <img src="/images/logo.png" alt="Wall" width="80" height="80" />
-          </a>
-        </div>
-
-        <div class="footer-email-wrap">
-          <a href="mailto:hello@wall.money" class="footer-email">hello@wall.money</a>
-          <div class="footer-divider"></div>
-        </div>
-
-        <div class="footer-bottom">
-          <nav class="footer-links">
-            <a href="https://github.com/maulana-tech/wall-main" target="_blank">GitHub</a>
-            <a href="https://sepolia.etherscan.io/address/0x295e4b7aF572FE8D66f9fa3ae4B9AF1404b3418C" target="_blank">Contracts</a>
-          </nav>
-
-          <div class="footer-info">
-            <div class="footer-info-col">
-              <div class="footer-info-title">
-                <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="6" stroke="currentColor"/></svg>
-                Open source
-              </div>
-              <p>Wall is open source and community-run. built for the WTF Hackathon with iExec Nox.</p>
-            </div>
-            <div class="footer-info-col">
-              <div class="footer-info-title">
-                <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="5" cy="6.5" r="4.5" stroke="currentColor"/><circle cx="8" cy="6.5" r="4.5" stroke="currentColor"/></svg>
-                Security
-              </div>
-              <p>found a vulnerability? disclose it responsibly — privacy protects everyone.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="footer-copyright">
-          <span>© Wall 2026</span>
-          <button class="footer-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">Top ↑</button>
-        </div>
-      </div>
-    </footer>
-  </div>
-
-  <!-- ═══════════ WALLET SPA ═══════════ -->
-  <div id="wallet" class="wallet-app" style="display:none">
-    <main class="wallet-main" id="wallet-main"></main>
-  </div>
-
-  <script type="module" src="/src/main.js"></script>
-</body>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#ECE5D3" />
+    <link rel="icon" type="image/png" href="/logo/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/logo/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/logo/favicon-32x32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/logo/apple-touch-icon.png" />
+    <link rel="manifest" href="/logo/site.webmanifest" />
+    <title>Wall — private money on Ethereum</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..700&family=Mulish:ital,wght@0,300..800;1,400..600&family=Geist+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/theme.css" />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
 </html>

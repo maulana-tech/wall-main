@@ -128,6 +128,10 @@ script/              Foundry deployment scripts
 - **Backend**: Express (local dev), Vercel Serverless Functions (production)
 - **Wallet**: MetaMask (Sepolia testnet)
 
+## Team
+
+- Muhammad Maulana Firdaussyah - 
+
 ## License
 
 MIT
