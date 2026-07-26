@@ -2,7 +2,7 @@ const { ethers } = require("ethers");
 const fs = require("fs");
 const path = require("path");
 
-const CONFIG = path.join(__dirname, "config.json");
+const CONFIG = path.join(__dirname, "..", "config.json");
 
 const MARKET_ABI = [
   "function openPosition(uint256 assetId) external returns (uint256)",

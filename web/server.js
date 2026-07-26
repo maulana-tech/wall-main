@@ -7,7 +7,7 @@ const fs = require("fs");
 const path = require("path");
 
 const ROOT = path.join(__dirname, "..");
-const CONFIG = path.join(ROOT, "api/config.json");
+const CONFIG = path.join(ROOT, "config.json");
 
 const app = express();
 app.use(cors());

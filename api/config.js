@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const CONFIG = path.join(__dirname, "config.json");
+const CONFIG = path.join(__dirname, "..", "config.json");
 
 module.exports = (req, res) => {
   if (!fs.existsSync(CONFIG)) {

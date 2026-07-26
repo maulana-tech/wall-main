@@ -2,7 +2,7 @@ const { ethers } = require("ethers");
 const fs = require("fs");
 const path = require("path");
 
-const CONFIG = path.join(__dirname, "config.json");
+const CONFIG = path.join(__dirname, "..", "config.json");
 const ADDR = /^0x[0-9a-fA-F]{40}$/;
 
 module.exports = async (req, res) => {

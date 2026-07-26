@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 
 const ROOT = path.join(__dirname, "..");
-const CONFIG_PATH = path.join(ROOT, "api", "config.json");
+const CONFIG_PATH = path.join(ROOT, "config.json");
 
 const POOL_ABI = [
   "function admin() external view returns (address)",
