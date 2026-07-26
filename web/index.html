@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,151 +7,209 @@
   <link rel="icon" href="/images/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/src/landing.css" />
   <link rel="stylesheet" href="/src/wallet.css" />
 </head>
 <body>
   <!-- ═══════════ LANDING ═══════════ -->
-  <div id="landing">
-    <!-- Grain overlay -->
-    <div class="grain"></div>
+  <div id="landing" class="landing-root">
 
-    <!-- Nav -->
-    <nav class="nav">
-      <div class="nav-inner">
-        <a href="/" class="nav-logo">
-          <img src="/images/logo.png" alt="Wall" width="28" height="28" />
-          <span>Wall</span>
+    <!-- ─── Hero ─── -->
+    <section class="hero-section" id="hero-section">
+      <!-- Fluid background (CSS fallback) -->
+      <div class="hero-fluid"></div>
+
+      <!-- Film grain -->
+      <div class="hero-grain"></div>
+
+      <!-- Chart grid (trading chart lines) -->
+      <div class="chart-grid" id="chart-grid"></div>
+
+      <!-- Dark overlay gradient -->
+      <div class="hero-gradient"></div>
+
+      <!-- Header -->
+      <header class="hero-header">
+        <a href="/" class="hero-logo">
+          <img src="/images/logo.png" alt="Wall" width="36" height="36" />
+          <span class="hero-logo-text">Wall</span>
         </a>
-        <div class="nav-links">
-          <a href="https://github.com/maulana-tech/wall-main" target="_blank">GitHub</a>
-          <span class="nav-sep">·</span>
-          <span class="nav-net">Sepolia</span>
-        </div>
-      </div>
-    </nav>
+        <nav class="hero-nav">
+          <a href="https://github.com/maulana-tech/wall-main" target="_blank" class="hero-nav-link">GitHub</a>
+          <button class="hero-nav-link hero-enter" id="btn-create-nav">Enter →</button>
+        </nav>
+      </header>
 
-    <!-- Hero -->
-    <section class="hero">
-      <div class="hero-label">
-        <span class="label-tag">iExec Nox · TEE</span>
-        <span class="label-sep">→</span>
-        <span class="label-tag">ETH Sepolia</span>
+      <!-- Hero content -->
+      <div class="hero-content">
+        <h1 class="hero-title">
+          <span class="hero-line"><span class="hero-word">private</span> <span class="hero-word">money</span></span>
+          <span class="hero-line"><span class="hero-word">that</span> <span class="hero-word">stays</span></span>
+          <span class="hero-line hero-scramble-line">
+            <span class="hero-scramble" id="scramble"></span>
+          </span>
+        </h1>
+        <span class="hero-scroll">scroll</span>
       </div>
-      <h1 class="hero-title">
-        private money<br />that stays
-        <span class="hero-scramble-wrap">
-          <span class="hero-scramble" id="scramble"></span>
-        </span>
-      </h1>
-      <p class="hero-sub">
-        a privacy wallet built on Ethereum with Nox confidential computing.<br />
-        balances are encrypted in a TEE — only you can see them.
-      </p>
-      <div class="hero-actions">
-        <button class="btn-primary" id="btn-create">Create Wallet</button>
-        <button class="btn-secondary" id="btn-import">Import Key</button>
-      </div>
-      <div class="hero-arrow">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M12 5v14M5 12l7 7 7-7" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
+
+      <!-- Transition gradient to story -->
+      <div class="hero-transition"></div>
     </section>
 
-    <!-- Story: 3 beats -->
-    <section class="story">
+    <!-- ─── Story ─── -->
+    <section class="story-section">
+      <!-- Grain overlay -->
+      <div class="story-grain"></div>
+
       <div class="story-inner">
+        <!-- Intro label -->
         <div class="story-label">
           <span>public ledger</span>
-          <span class="story-arrow">→</span>
+          <span class="story-label-sep">→</span>
           <span>encrypted pool</span>
-          <span class="story-arrow">→</span>
+          <span class="story-label-sep">→</span>
           <span>Nox TEE</span>
         </div>
+
+        <!-- Heading -->
         <h2 class="story-heading">
           public chains remember everything.
-          <span class="story-muted">the encrypted layer forgets.</span>
+          <span class="story-heading-muted">the encrypted layer forgets.</span>
         </h2>
 
+        <!-- Three narrative cards -->
         <div class="story-cards">
-          <!-- Beat 1 -->
           <div class="story-card">
-            <div class="card-num">01</div>
-            <div class="card-label">public ledger</div>
-            <div class="card-coord">[ every block · forever ]</div>
-            <h3>every chain is an open diary.</h3>
-            <p>every transaction, balance, and counterparty on a public chain is permanent, linkable, and readable by anyone — forever. the ledger never forgets.</p>
+            <div class="story-card-grid">
+              <div class="story-card-visual">
+                <img src="/assets/hourglass.webp" alt="" class="story-card-img" />
+              </div>
+              <div class="story-card-text">
+                <div class="story-card-meta">
+                  <span class="story-card-n">01</span>
+                  <span class="story-card-label">public ledger</span>
+                  <span class="story-card-coord">[ every block · forever ]</span>
+                </div>
+                <h3>every chain is an open diary.</h3>
+                <p>every transaction, balance, and counterparty on a public chain is permanent, linkable, and readable by anyone — forever. the ledger never forgets.</p>
+              </div>
+            </div>
           </div>
 
-          <!-- Beat 2 -->
           <div class="story-card">
-            <div class="card-num">02</div>
-            <div class="card-label">encrypted</div>
-            <div class="card-coord">[ Nox · euint256 ]</div>
-            <h3>the encrypted layer forgets.</h3>
-            <p>deposit into Wall and your balance becomes an encrypted handle — an <code>euint256</code> inside a TEE. amount and owner stay inside the enclave; only you hold the decryption key.</p>
+            <div class="story-card-grid story-card-grid-flip">
+              <div class="story-card-visual">
+                <img src="/assets/balance.webp" alt="" class="story-card-img" />
+              </div>
+              <div class="story-card-text">
+                <div class="story-card-meta">
+                  <span class="story-card-n">02</span>
+                  <span class="story-card-label">encrypted</span>
+                  <span class="story-card-coord">[ Nox · euint256 ]</span>
+                </div>
+                <h3>the encrypted layer forgets.</h3>
+                <p>deposit into Wall and your balance becomes an encrypted handle — an <code>euint256</code> inside a TEE. amount and owner stay inside the enclave; only you hold the decryption key.</p>
+              </div>
+            </div>
           </div>
 
-          <!-- Beat 3 -->
           <div class="story-card">
-            <div class="card-num">03</div>
-            <div class="card-label">auditable</div>
-            <div class="card-coord">[ ACL · selective disclosure ]</div>
-            <h3>the TEE is the lock.</h3>
-            <p>every move is computed inside Nox's trusted execution environment. an auditor can decrypt via ACL — but only with your permission. no leak, no link, no trace.</p>
+            <div class="story-card-grid">
+              <div class="story-card-visual">
+                <img src="/assets/cube.webp" alt="" class="story-card-img" />
+              </div>
+              <div class="story-card-text">
+                <div class="story-card-meta">
+                  <span class="story-card-n">03</span>
+                  <span class="story-card-label">auditable</span>
+                  <span class="story-card-coord">[ ACL · selective disclosure ]</span>
+                </div>
+                <h3>the TEE is the lock.</h3>
+                <p>every move is computed inside Nox's trusted execution environment. an auditor can decrypt via ACL — but only with your permission. no leak, no link, no trace.</p>
+              </div>
+            </div>
           </div>
+        </div>
+
+        <!-- Bento: platform at a glance -->
+        <div class="bento-section">
+          <div class="bento-grid">
+            <a href="#/pool" class="bento-card" id="feat-pool">
+              <div class="bento-title">Confidential Pool</div>
+              <p class="bento-desc">deposit, withdraw, and transfer with encrypted balances. only you see your amount.</p>
+              <span class="bento-link">open →</span>
+            </a>
+            <a href="#/market" class="bento-card" id="feat-market">
+              <div class="bento-title">Confidential Market</div>
+              <p class="bento-desc">lend and borrow with encrypted positions. rates are public, balances are not.</p>
+              <span class="bento-link">open →</span>
+            </a>
+            <a href="#/auditor" class="bento-card" id="feat-auditor">
+              <div class="bento-title">Auditor Disclosure</div>
+              <p class="bento-desc">selective disclosure via Nox ACL. prove solvency without revealing user data.</p>
+              <span class="bento-link">open →</span>
+            </a>
+            <div class="bento-card bento-card-info">
+              <div class="bento-title">ETH Sepolia</div>
+              <p class="bento-desc">deployed and verified on Ethereum Sepolia testnet. real contracts, real encryption.</p>
+              <span class="bento-link">0x295e…418C</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="story-cta">
+          <button class="cta-btn" id="btn-create">enter the encrypted layer →</button>
         </div>
       </div>
     </section>
 
-    <!-- Features -->
-    <section class="features">
-      <div class="features-inner">
-        <h2 class="features-heading">the platform</h2>
-        <div class="features-grid">
-          <a href="#/pool" class="feature-card" id="feat-pool">
-            <div class="feature-icon">🏦</div>
-            <div class="feature-title">Confidential Pool</div>
-            <p>deposit, withdraw, and transfer with encrypted balances. only you see your amount.</p>
-            <span class="feature-link">open →</span>
-          </a>
-          <a href="#/market" class="feature-card" id="feat-market">
-            <div class="feature-icon">📊</div>
-            <div class="feature-title">Confidential Market</div>
-            <p>lend and borrow with encrypted positions. rates are public, balances are not.</p>
-            <span class="feature-link">open →</span>
-          </a>
-          <a href="#/auditor" class="feature-card" id="feat-auditor">
-            <div class="feature-icon">🔍</div>
-            <div class="feature-title">Auditor Disclosure</div>
-            <p>selective disclosure via Nox ACL. prove solvency without revealing user data.</p>
-            <span class="feature-link">open →</span>
-          </a>
-          <div class="feature-card feature-card-info">
-            <div class="feature-icon">⛓️</div>
-            <div class="feature-title">ETH Sepolia</div>
-            <p>deployed and verified on Ethereum Sepolia testnet. real contracts, real encryption.</p>
-            <span class="feature-link">0x295e…418C</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
+    <!-- ─── Footer ─── -->
+    <footer class="landing-footer">
+      <div class="footer-grain"></div>
       <div class="footer-inner">
-        <div class="footer-brand">
-          <img src="/images/logo.png" alt="Wall" width="20" height="20" />
-          <span>Wall</span>
+        <div class="footer-top">
+          <p class="footer-tagline">
+            feel free to reach out if you want a privacy wallet on Ethereum — or simply have a chat.
+          </p>
+          <a href="/" class="footer-logo">
+            <img src="/images/logo.png" alt="Wall" width="80" height="80" />
+          </a>
         </div>
-        <div class="footer-links">
-          <a href="https://github.com/maulana-tech/wall-main" target="_blank">GitHub</a>
-          <span class="footer-sep">·</span>
-          <a href="https://sepolia.etherscan.io/address/0x295e4b7aF572FE8D66f9fa3ae4B9AF1404b3418C" target="_blank">Contracts</a>
-          <span class="footer-sep">·</span>
-          <span>Built for WTF Hackathon</span>
+
+        <div class="footer-email-wrap">
+          <a href="mailto:hello@wall.money" class="footer-email">hello@wall.money</a>
+          <div class="footer-divider"></div>
+        </div>
+
+        <div class="footer-bottom">
+          <nav class="footer-links">
+            <a href="https://github.com/maulana-tech/wall-main" target="_blank">GitHub</a>
+            <a href="https://sepolia.etherscan.io/address/0x295e4b7aF572FE8D66f9fa3ae4B9AF1404b3418C" target="_blank">Contracts</a>
+          </nav>
+
+          <div class="footer-info">
+            <div class="footer-info-col">
+              <div class="footer-info-title">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="6" stroke="currentColor"/></svg>
+                Open source
+              </div>
+              <p>Wall is open source and community-run. built for the WTF Hackathon with iExec Nox.</p>
+            </div>
+            <div class="footer-info-col">
+              <div class="footer-info-title">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="5" cy="6.5" r="4.5" stroke="currentColor"/><circle cx="8" cy="6.5" r="4.5" stroke="currentColor"/></svg>
+                Security
+              </div>
+              <p>found a vulnerability? disclose it responsibly — privacy protects everyone.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-copyright">
+          <span>© Wall 2026</span>
+          <button class="footer-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">Top ↑</button>
         </div>
       </div>
     </footer>

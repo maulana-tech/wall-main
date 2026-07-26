@@ -7,7 +7,7 @@ import { state } from "./lib/state.js";
 import { $ } from "./lib/utils.js";
 import { fetchConfig, fetchPrices, generatePrivateKey, initWallet } from "./lib/chain.js";
 import { initNox } from "./lib/nox.js";
-import { initScrambleCycle, initScrollObserver } from "./landing.js";
+import { initScrambleCycle, initScrollObserver, initChartGridFade } from "./landing.js";
 import { renderWallet, loadHistory, rescan, toast, runDeposit, runAction, pushHistory } from "./wallet.js";
 import { marketRefresh } from "./lib/market.js";
 import { ethers } from "./lib/chain.js";
@@ -71,6 +71,9 @@ function showLanding() {
 
   // Scroll observer for story cards
   initScrollObserver();
+
+  // Chart grid fade on scroll
+  initChartGridFade();
 
   // Wire create button
   $('#btn-create')?.addEventListener('click', () => {

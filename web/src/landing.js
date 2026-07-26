@@ -1,5 +1,5 @@
 // ─── Landing page logic ───
-// Scramble animation, scroll observer, button wiring.
+// Scramble animation, scroll observer, chart grid fade.
 
 import { $ } from "./lib/utils.js";
 
@@ -74,4 +74,30 @@ export function initScrollObserver() {
   }, { threshold: 0.15 });
 
   document.querySelectorAll('.story-card').forEach((card) => observer.observe(card));
+}
+
+export function initChartGridFade() {
+  const grid = $('#chart-grid');
+  if (!grid) return;
+
+  let raf = 0;
+  const update = () => {
+    raf = 0;
+    const p = Math.min(1, Math.max(0, window.scrollY / (window.innerHeight * 0.6)));
+    const a = 1 - p;
+    grid.style.setProperty('--grid-v', `rgba(255,255,255,${(0.06 * a).toFixed(3)})`);
+    grid.style.setProperty('--grid-h', `rgba(255,255,255,${(0.09 * a).toFixed(3)})`);
+    grid.style.setProperty('--grid-op', a.toFixed(3));
+  };
+
+  const onScroll = () => {
+    if (!raf) raf = requestAnimationFrame(update);
+  };
+
+  update();
+  window.addEventListener('scroll', onScroll, { passive: true });
+  return () => {
+    window.removeEventListener('scroll', onScroll);
+    if (raf) cancelAnimationFrame(raf);
+  };
 }
