@@ -3,6 +3,7 @@ node_modules/
 
 # Foundry
 lib/
+!web/src/lib/
 out/
 cache/
 broadcast/

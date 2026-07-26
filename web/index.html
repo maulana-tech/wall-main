@@ -1,22 +1,175 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#ECE5D3" />
-    <link rel="icon" type="image/png" href="/logo.png" />
-    <title>Wall — private payments on Ethereum</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..700&family=Mulish:ital,wght@0,300..800;1,400..600&family=Geist+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="/src/theme.css" />
-    <link rel="stylesheet" href="/src/style.css" />
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wall — Private Money on Ethereum</title>
+  <link rel="icon" href="/images/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/landing.css" />
+  <link rel="stylesheet" href="/src/wallet.css" />
+</head>
+<body>
+  <!-- ═══════════ LANDING ═══════════ -->
+  <div id="landing">
+    <!-- Grain overlay -->
+    <div class="grain"></div>
+
+    <!-- Nav -->
+    <nav class="nav">
+      <div class="nav-inner">
+        <a href="/" class="nav-logo">
+          <img src="/images/logo.png" alt="Wall" width="28" height="28" />
+          <span>Wall</span>
+        </a>
+        <div class="nav-links">
+          <a href="https://github.com/maulana-tech/wall-main" target="_blank">GitHub</a>
+          <span class="nav-sep">·</span>
+          <span class="nav-net">Sepolia</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-label">
+        <span class="label-tag">iExec Nox · TEE</span>
+        <span class="label-sep">→</span>
+        <span class="label-tag">ETH Sepolia</span>
+      </div>
+      <h1 class="hero-title">
+        private money<br />that stays
+        <span class="hero-scramble-wrap">
+          <span class="hero-scramble" id="scramble"></span>
+        </span>
+      </h1>
+      <p class="hero-sub">
+        a privacy wallet built on Ethereum with Nox confidential computing.<br />
+        balances are encrypted in a TEE — only you can see them.
+      </p>
+      <div class="hero-actions">
+        <button class="btn-primary" id="btn-create">Create Wallet</button>
+        <button class="btn-secondary" id="btn-import">Import Key</button>
+      </div>
+      <div class="hero-arrow">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M12 5v14M5 12l7 7 7-7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Story: 3 beats -->
+    <section class="story">
+      <div class="story-inner">
+        <div class="story-label">
+          <span>public ledger</span>
+          <span class="story-arrow">→</span>
+          <span>encrypted pool</span>
+          <span class="story-arrow">→</span>
+          <span>Nox TEE</span>
+        </div>
+        <h2 class="story-heading">
+          public chains remember everything.
+          <span class="story-muted">the encrypted layer forgets.</span>
+        </h2>
+
+        <div class="story-cards">
+          <!-- Beat 1 -->
+          <div class="story-card">
+            <div class="card-num">01</div>
+            <div class="card-label">public ledger</div>
+            <div class="card-coord">[ every block · forever ]</div>
+            <h3>every chain is an open diary.</h3>
+            <p>every transaction, balance, and counterparty on a public chain is permanent, linkable, and readable by anyone — forever. the ledger never forgets.</p>
+          </div>
+
+          <!-- Beat 2 -->
+          <div class="story-card">
+            <div class="card-num">02</div>
+            <div class="card-label">encrypted</div>
+            <div class="card-coord">[ Nox · euint256 ]</div>
+            <h3>the encrypted layer forgets.</h3>
+            <p>deposit into Wall and your balance becomes an encrypted handle — an <code>euint256</code> inside a TEE. amount and owner stay inside the enclave; only you hold the decryption key.</p>
+          </div>
+
+          <!-- Beat 3 -->
+          <div class="story-card">
+            <div class="card-num">03</div>
+            <div class="card-label">auditable</div>
+            <div class="card-coord">[ ACL · selective disclosure ]</div>
+            <h3>the TEE is the lock.</h3>
+            <p>every move is computed inside Nox's trusted execution environment. an auditor can decrypt via ACL — but only with your permission. no leak, no link, no trace.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features">
+      <div class="features-inner">
+        <h2 class="features-heading">the platform</h2>
+        <div class="features-grid">
+          <a href="#/pool" class="feature-card" id="feat-pool">
+            <div class="feature-icon">🏦</div>
+            <div class="feature-title">Confidential Pool</div>
+            <p>deposit, withdraw, and transfer with encrypted balances. only you see your amount.</p>
+            <span class="feature-link">open →</span>
+          </a>
+          <a href="#/market" class="feature-card" id="feat-market">
+            <div class="feature-icon">📊</div>
+            <div class="feature-title">Confidential Market</div>
+            <p>lend and borrow with encrypted positions. rates are public, balances are not.</p>
+            <span class="feature-link">open →</span>
+          </a>
+          <a href="#/auditor" class="feature-card" id="feat-auditor">
+            <div class="feature-icon">🔍</div>
+            <div class="feature-title">Auditor Disclosure</div>
+            <p>selective disclosure via Nox ACL. prove solvency without revealing user data.</p>
+            <span class="feature-link">open →</span>
+          </a>
+          <div class="feature-card feature-card-info">
+            <div class="feature-icon">⛓️</div>
+            <div class="feature-title">ETH Sepolia</div>
+            <p>deployed and verified on Ethereum Sepolia testnet. real contracts, real encryption.</p>
+            <span class="feature-link">0x295e…418C</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <img src="/images/logo.png" alt="Wall" width="20" height="20" />
+          <span>Wall</span>
+        </div>
+        <div class="footer-links">
+          <a href="https://github.com/maulana-tech/wall-main" target="_blank">GitHub</a>
+          <span class="footer-sep">·</span>
+          <a href="https://sepolia.etherscan.io/address/0x295e4b7aF572FE8D66f9fa3ae4B9AF1404b3418C" target="_blank">Contracts</a>
+          <span class="footer-sep">·</span>
+          <span>Built for WTF Hackathon</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ═══════════ WALLET SPA ═══════════ -->
+  <div id="wallet" class="wallet-app" style="display:none">
+    <header class="wallet-header">
+      <button class="wallet-back" id="wallet-back">← Landing</button>
+      <div class="wallet-title">
+        <img src="/images/logo.png" alt="" width="22" height="22" />
+        <span>Wall Wallet</span>
+      </div>
+      <div class="wallet-net-badge">Sepolia</div>
+    </header>
+    <main class="wallet-main" id="wallet-main"></main>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
 </html>
