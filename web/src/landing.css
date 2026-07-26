@@ -110,7 +110,6 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 1.25rem 2rem;
-  mix-blend-mode: difference;
 }
 .hero-logo {
   display: flex;
@@ -136,7 +135,7 @@ body {
   letter-spacing: 0.18em;
 }
 .hero-nav-link {
-  color: rgba(26,29,38,0.5);
+  color: rgba(26,29,38,0.45);
   text-decoration: none;
   transition: color 0.2s;
   background: none;
@@ -353,9 +352,14 @@ body {
   border-radius: 4px;
 }
 
-/* Bento */
-.bento-section {
-  margin-top: 4rem;
+/* Bento — on cream background */
+.features-section {
+  padding: 6rem 1.5rem;
+  background: var(--bg);
+}
+.features-inner {
+  max-width: 900px;
+  margin: 0 auto;
 }
 .bento-grid {
   display: grid;
@@ -363,11 +367,11 @@ body {
   gap: 1px;
   border-radius: 1.25rem;
   overflow: hidden;
-  border: 1px solid rgba(232,220,200,0.08);
-  background: rgba(232,220,200,0.06);
+  border: 1px solid var(--border);
+  background: rgba(26,29,38,0.06);
 }
 .bento-card {
-  background: rgba(26,29,38,0.8);
+  background: var(--bg-card);
   padding: 2rem;
   text-decoration: none;
   color: inherit;
@@ -375,19 +379,19 @@ body {
   display: flex;
   flex-direction: column;
 }
-.bento-card:hover { background: rgba(34,38,52,0.9); }
+.bento-card:hover { background: var(--bg-hover); }
 .bento-card-info { cursor: default; }
 .bento-title {
   font-family: var(--font-mono);
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  color: #f0ebe3;
+  color: var(--text);
   margin-bottom: 0.6rem;
 }
 .bento-desc {
   font-size: 0.85rem;
-  color: #b8b0a2;
+  color: var(--text-2);
   line-height: 1.6;
   flex: 1;
 }
@@ -397,14 +401,15 @@ body {
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  color: #8a857f;
+  color: var(--text-3);
   transition: color 0.2s;
 }
 .bento-card:hover .bento-link { color: var(--accent); }
 
 /* CTA */
 .story-cta {
-  margin-top: 2.5rem;
+  margin-top: 3rem;
+  text-align: center;
 }
 .cta-btn {
   font-family: var(--font-mono);
@@ -569,6 +574,7 @@ body {
   .story-card-grid-flip .story-card-text { order: 0; }
   .story-card-img { width: 100%; max-width: 280px; }
   .bento-grid { grid-template-columns: 1fr; }
+  .features-section { padding: 4rem 1.25rem; }
   .footer-bottom { flex-direction: column; }
   .footer-info { grid-template-columns: 1fr; }
   .footer-email { font-size: clamp(1.5rem, 6vw, 3rem); }
