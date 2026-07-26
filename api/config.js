@@ -1,13 +1,11 @@
 const fs = require("fs");
 const path = require("path");
 
-const ROOT = path.join(__dirname, "..");
-const B = path.join(ROOT, "circuits/build");
-const CONFIG = path.join(B, "web_config.json");
+const CONFIG = path.join(__dirname, "config.json");
 
 module.exports = (req, res) => {
   if (!fs.existsSync(CONFIG)) {
-    return res.status(503).json({ error: "run scripts/deploy.js first" });
+    return res.status(503).json({ error: "config not found" });
   }
   res.setHeader("content-type", "application/json");
   res.setHeader("cache-control", "no-store, max-age=0");

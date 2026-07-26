@@ -4,15 +4,16 @@ const path = require("path");
 
 const CONFIG = path.join(__dirname, "config.json");
 
-const POOL_ABI = [
-  "function deposit(bytes inputHandle, bytes inputProof, uint256 assetId) external",
-  "function withdraw(bytes inputHandle, bytes inputProof, uint256 assetId) external",
-  "function transfer(address to, bytes inputHandle, bytes inputProof, uint256 assetId) external",
+const MARKET_ABI = [
+  "function openPosition(uint256 assetId) external returns (uint256)",
+  "function supply(uint256 positionId, bytes, bytes) external",
+  "function borrow(uint256 positionId, bytes, bytes) external",
+  "function repay(uint256 positionId, bytes, bytes) external",
+  "function liquidate(uint256 positionId, bytes, bytes) external",
 ];
 
 const HEX = /^[0-9a-fA-F]+$/;
 const ADDR = /^0x[0-9a-fA-F]{40}$/;
-const INT = /^-?[0-9]+$/;
 
 module.exports = async (req, res) => {
   if (req.method !== "POST") {
@@ -20,15 +21,13 @@ module.exports = async (req, res) => {
   }
 
   const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
-  const { action, handle, handleProof, recipient, extAmount, fee, assetId } = body;
+  const { action, positionId, handle, handleProof, assetId } = body;
 
   for (const [k, v, re] of [
     ["action", action, /^[a-z]+$/],
+    ["positionId", String(positionId ?? ""), /^[0-9]+$/],
     ["handle", handle, HEX],
     ["handleProof", handleProof, HEX],
-    ["recipient", recipient, ADDR],
-    ["extAmount", String(extAmount ?? "0"), INT],
-    ["fee", String(fee ?? "0"), INT],
     ["assetId", String(assetId ?? "1"), /^[12]$/],
   ]) {
     if (v !== undefined && v !== "" && !re.test(v)) {
@@ -45,18 +44,24 @@ module.exports = async (req, res) => {
     const config = JSON.parse(fs.readFileSync(CONFIG, "utf8"));
     const provider = new ethers.JsonRpcProvider(config.rpc);
     const signer = new ethers.Wallet(secret, provider);
-    const pool = new ethers.Contract(config.pool, POOL_ABI, signer);
+    const market = new ethers.Contract(config.market, MARKET_ABI, signer);
 
     let tx;
     switch (action) {
-      case "deposit":
-        tx = await pool.deposit(handle, handleProof, assetId);
+      case "openPosition":
+        tx = await market.openPosition(assetId);
         break;
-      case "withdraw":
-        tx = await pool.withdraw(handle, handleProof, assetId);
+      case "supply":
+        tx = await market.supply(positionId, handle, handleProof);
         break;
-      case "transfer":
-        tx = await pool.transfer(recipient, handle, handleProof, assetId);
+      case "borrow":
+        tx = await market.borrow(positionId, handle, handleProof);
+        break;
+      case "repay":
+        tx = await market.repay(positionId, handle, handleProof);
+        break;
+      case "liquidate":
+        tx = await market.liquidate(positionId, handle, handleProof);
         break;
       default:
         return res.status(400).json({ ok: false, error: `unknown action: ${action}` });
