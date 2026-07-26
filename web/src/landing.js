@@ -85,8 +85,8 @@ export function initChartGridFade() {
     raf = 0;
     const p = Math.min(1, Math.max(0, window.scrollY / (window.innerHeight * 0.6)));
     const a = 1 - p;
-    grid.style.setProperty('--grid-v', `rgba(255,255,255,${(0.06 * a).toFixed(3)})`);
-    grid.style.setProperty('--grid-h', `rgba(255,255,255,${(0.09 * a).toFixed(3)})`);
+    grid.style.setProperty('--grid-v', `rgba(26,29,38,${(0.05 * a).toFixed(3)})`);
+    grid.style.setProperty('--grid-h', `rgba(26,29,38,${(0.08 * a).toFixed(3)})`);
     grid.style.setProperty('--grid-op', a.toFixed(3));
   };
 

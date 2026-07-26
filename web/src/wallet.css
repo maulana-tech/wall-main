@@ -5,7 +5,7 @@
 .wallet-app {
   min-height: 100vh;
   background: var(--bg);
-  color: var(--cream);
+  color: var(--text);
 }
 
 /* ─── Header ─── */
@@ -17,7 +17,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem 1.25rem;
-  background: rgba(12,14,20,0.85);
+  background: rgba(240,235,227,0.85);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
 }
@@ -47,10 +47,10 @@
   text-transform: uppercase;
   letter-spacing: 0.14em;
   color: var(--accent);
-  background: rgba(196,168,122,0.08);
+  background: rgba(184,151,90,0.08);
   padding: 0.25rem 0.6rem;
   border-radius: 999px;
-  border: 1px solid rgba(196,168,122,0.15);
+  border: 1px solid rgba(184,151,90,0.15);
 }
 
 /* ─── Main ─── */
@@ -106,7 +106,7 @@
   transition: all 0.2s;
 }
 .tab.on {
-  color: var(--cream);
+  color: var(--text);
   border-bottom-color: var(--accent);
 }
 .tab:hover { color: var(--text-2); }
@@ -137,7 +137,7 @@
 }
 .act:hover {
   background: var(--bg-hover);
-  color: var(--cream);
+  color: var(--text);
   border-color: var(--border-hover);
 }
 .act-i { font-size: 1.2rem; }
@@ -164,7 +164,7 @@
   transition: all 0.2s;
 }
 .subtab.on {
-  color: var(--cream);
+  color: var(--text);
   border-bottom-color: var(--accent);
 }
 
@@ -283,7 +283,7 @@
   font-family: var(--font-mono);
   font-size: 0.7rem;
   letter-spacing: 0.06em;
-  color: var(--cream);
+  color: var(--text);
   background: var(--bg-card);
   border: 1px solid var(--border);
   padding: 0.6rem 1.2rem;
@@ -322,7 +322,7 @@
 }
 .lp-b:hover {
   background: var(--bg-hover);
-  color: var(--cream);
+  color: var(--text);
   border-color: var(--border-hover);
 }
 .lp-b.ghost { background: transparent; }
