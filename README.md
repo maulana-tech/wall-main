@@ -1,66 +1,133 @@
-## Foundry
+# Wall — Private Payments on Ethereum
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+A privacy wallet on **ETH Sepolia** using **iExec Nox** (TEE-based confidential computing). Balances and lending positions are encrypted on-chain via Nox handles — amounts are never stored in plaintext.
 
-Foundry consists of:
+Built for **WTF Hackathon Summer Edition** (iExec Nox challenge).
 
-- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
-- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
-- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
-- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+## What it does
 
-## Documentation
+- **Confidential Pool**: Deposit, withdraw, and transfer ERC-20 tokens with encrypted balances via Nox
+- **Confidential Market**: Lend, borrow, and repay with encrypted collateral/debt positions
+- **Auditor disclosure**: Selective disclosure via Nox ACL — the auditor can decrypt any balance
+- **Faucet**: Mint test USDC/EURC on Sepolia for testing
 
-https://book.getfoundry.sh/
+## How Nox is used
 
-## Usage
+Wall replaces zero-knowledge proofs with Nox TEE encryption:
 
-### Build
+1. User encrypts the amount client-side via `@iexec-nox/handle`
+2. Encrypted handle + proof are submitted to the relayer
+3. Relayer calls the pool/market contract
+4. Contract decrypts via `Nox.fromExternal()`, computes on encrypted data
+5. Result is stored as an `euint256` handle — never plaintext
 
-```shell
-$ forge build
+The auditor (set at deploy time) can decrypt any balance via `Nox.allow(auditor)`.
+
+## Architecture
+
+```
+User (browser)                Relayer (Vercel)         Contracts (Sepolia)
+     │                              │                       │
+     ├── encrypt amount ─────►      │                       │
+     │   (@iexec-nox/handle)        │                       │
+     │                              │                       │
+     ├── approve ERC20 ─────────────────────────────────────┤
+     │                              │                       │
+     ├── submit {handle, proof} ──► │                       │
+     │                              ├── deposit/withdraw ──►│
+     │                              │   Nox.fromExternal()  │
+     │                              │   Nox.add/sub()       │
+     │                              │   Nox.allowThis()     │
+     │                              │◄── event ─────────────┤
+     │◄── txHash ──────────────────│                       │
 ```
 
-### Test
+## Deployed contracts (Sepolia)
 
-```shell
-$ forge test
+| Contract | Address |
+|----------|---------|
+| WallPool | [`0x295e4b7aF572FE8D66f9fa3ae4B9AF1404b3418C`](https://sepolia.etherscan.io/address/0x295e4b7aF572FE8D66f9fa3ae4B9AF1404b3418C) |
+| WallMarket | [`0xEB5a95Dac55b829dCbB3341B07b41c99E1Fb1169`](https://sepolia.etherscan.io/address/0xEB5a95Dac55b829dCbB3341B07b41c99E1Fb1169) |
+| MockUSDC | [`0xE2084A182c64fC3685ba26E3D832846af6aa54b8`](https://sepolia.etherscan.io/address/0xE2084A182c64fC3685ba26E3D832846af6aa54b8) |
+| MockEURC | [`0xeeb1C3C6d08fd802A292D7B97517F0C41416aF92`](https://sepolia.etherscan.io/address/0xeeb1C3C6d08fd802A292D7B97517F0C41416aF92) |
+
+## Setup
+
+### Prerequisites
+- Node.js 20.x
+- Foundry (`forge`) — for Solidity compilation
+- MetaMask browser extension
+- Sepolia ETH (from faucet)
+
+### Install
+```bash
+git clone https://github.com/maulana-tech/wall-main.git
+cd wall-main
+npm install
 ```
 
-### Format
-
-```shell
-$ forge fmt
+### Build contracts
+```bash
+forge build --use 0.8.35
 ```
 
-### Gas Snapshots
-
-```shell
-$ forge snapshot
+### Run tests
+```bash
+forge test --use 0.8.35 -vv
 ```
 
-### Anvil
+### Run locally
+```bash
+# Terminal 1: relayer + config server
+RELAYER_PRIVATE_KEY=0x... node web/server.js
 
-```shell
-$ anvil
+# Terminal 2: Vite dev server
+npm run web:dev
 ```
 
-### Deploy
+Open http://localhost:5173, connect MetaMask to Sepolia, and use the faucet button to get test tokens.
 
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
+### Deploy to Vercel
+```bash
+vercel deploy --prod
 ```
 
-### Cast
+Set `RELAYER_PRIVATE_KEY` in Vercel dashboard → Settings → Environment Variables.
 
-```shell
-$ cast <subcommand>
+## Project structure
+
+```
+src/                 Solidity contracts
+  WallPool.sol       Confidential pool with Nox encrypted balances
+  WallMarket.sol     Confidential lending market
+  mocks/             Test ERC-20 tokens (USDC, EURC)
+
+client/lib/          Off-chain core (CommonJS)
+  nox-client.js      Nox JS SDK wrapper (encrypt/decrypt)
+  eth.js             ethers.js chain interaction (ABIs + classes)
+
+api/                 Vercel serverless functions
+  submit.js          Relayer for pool operations
+  market.js          Relayer for market operations
+  faucet.js          Test token minting
+  config.js          Serves public wallet config
+
+web/                 Vite + vanilla JS wallet UI
+  src/main.js        Core wallet SPA
+  server.js          Express relayer (local dev)
+
+test/                Foundry tests
+script/              Foundry deployment scripts
 ```
 
-### Help
+## Tech stack
 
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+- **Smart contracts**: Solidity ^0.8.35, Foundry, OpenZeppelin
+- **Privacy**: iExec Nox Protocol (`@iexec-nox/handle`, `@iexec-nox/nox-protocol-contracts`)
+- **Frontend**: Vite, vanilla JavaScript, ethers.js
+- **Backend**: Express (local dev), Vercel Serverless Functions (production)
+- **Wallet**: MetaMask (Sepolia testnet)
+
+## License
+
+MIT
