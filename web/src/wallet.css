@@ -1,11 +1,11 @@
 /* ═══════════════════════════════════════════════════════════
-   Wall Wallet — dark wallet UI (inherits landing.css vars)
+   Wall Wallet — inherits --bg, --text, --accent from landing.css
    ═══════════════════════════════════════════════════════════ */
 
 .wallet-app {
   min-height: 100vh;
   background: var(--bg);
-  color: var(--text);
+  color: var(--cream);
 }
 
 /* ─── Header ─── */
@@ -17,12 +17,12 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem 1.25rem;
-  background: rgba(23,18,11,0.85);
+  background: rgba(12,14,20,0.85);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
 }
 .wallet-back {
-  font-family: var(--mono);
+  font-family: var(--font-mono);
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -42,15 +42,15 @@
 }
 .wallet-title img { border-radius: 5px; }
 .wallet-net-badge {
-  font-family: var(--mono);
+  font-family: var(--font-mono);
   font-size: 0.6rem;
   text-transform: uppercase;
   letter-spacing: 0.14em;
   color: var(--accent);
-  background: rgba(191,162,76,0.1);
+  background: rgba(196,168,122,0.08);
   padding: 0.25rem 0.6rem;
   border-radius: 999px;
-  border: 1px solid rgba(191,162,76,0.2);
+  border: 1px solid rgba(196,168,122,0.15);
 }
 
 /* ─── Main ─── */
@@ -77,7 +77,7 @@
   letter-spacing: -0.02em;
 }
 .wallet-main .sym {
-  font-family: var(--mono);
+  font-family: var(--font-mono);
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -94,7 +94,7 @@
 .tab {
   flex: 1;
   padding: 0.6rem;
-  font-family: var(--mono);
+  font-family: var(--font-mono);
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -106,7 +106,7 @@
   transition: all 0.2s;
 }
 .tab.on {
-  color: var(--text);
+  color: var(--cream);
   border-bottom-color: var(--accent);
 }
 .tab:hover { color: var(--text-2); }
@@ -124,7 +124,7 @@
   align-items: center;
   gap: 0.3rem;
   padding: 0.8rem 0.4rem;
-  font-family: var(--mono);
+  font-family: var(--font-mono);
   font-size: 0.65rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -137,8 +137,8 @@
 }
 .act:hover {
   background: var(--bg-hover);
-  color: var(--text);
-  border-color: rgba(239,233,220,0.16);
+  color: var(--cream);
+  border-color: var(--border-hover);
 }
 .act-i { font-size: 1.2rem; }
 
@@ -152,7 +152,7 @@
 .subtab {
   flex: 1;
   padding: 0.5rem;
-  font-family: var(--mono);
+  font-family: var(--font-mono);
   font-size: 0.65rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -164,16 +164,14 @@
   transition: all 0.2s;
 }
 .subtab.on {
-  color: var(--text);
+  color: var(--cream);
   border-bottom-color: var(--accent);
 }
 
 /* ─── Holdings ─── */
-.holdings {
-  margin-bottom: 0.5rem;
-}
+.holdings { margin-bottom: 0.5rem; }
 .sec-h {
-  font-family: var(--mono);
+  font-family: var(--font-mono);
   font-size: 0.6rem;
   text-transform: uppercase;
   letter-spacing: 0.16em;
@@ -202,17 +200,13 @@
 .hrow-main { flex: 1; }
 .hsym { font-weight: 500; font-size: 0.9rem; }
 .hrow-amt { text-align: right; }
-.hbal { font-family: var(--mono); font-size: 0.9rem; }
+.hbal { font-family: var(--font-mono); font-size: 0.9rem; }
 .muted { color: var(--text-3); }
 .small { font-size: 0.75rem; }
 
 /* ─── Activity ─── */
 .activity { margin-top: 0.5rem; }
-.arow-wrap {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
+.arow-wrap { display: flex; align-items: center; gap: 0.5rem; }
 .arow {
   flex: 1;
   display: flex;
@@ -236,7 +230,7 @@
 .arow-main { flex: 1; display: flex; flex-direction: column; }
 .dir { font-size: 0.85rem; font-weight: 500; }
 .when { font-size: 0.7rem; color: var(--text-3); }
-.arow .amt { font-family: var(--mono); font-size: 0.85rem; }
+.arow .amt { font-family: var(--font-mono); font-size: 0.85rem; }
 .arow-tx {
   color: var(--text-3);
   text-decoration: none;
@@ -267,7 +261,7 @@
   animation: spin 2s linear infinite;
 }
 .prove-status {
-  font-family: var(--mono);
+  font-family: var(--font-mono);
   font-size: 0.8rem;
   color: var(--text-2);
 }
@@ -286,10 +280,10 @@
   bottom: 2rem;
   left: 50%;
   transform: translateX(-50%) translateY(120%);
-  font-family: var(--mono);
+  font-family: var(--font-mono);
   font-size: 0.7rem;
   letter-spacing: 0.06em;
-  color: var(--text);
+  color: var(--cream);
   background: var(--bg-card);
   border: 1px solid var(--border);
   padding: 0.6rem 1.2rem;
@@ -312,12 +306,9 @@
 }
 
 /* ─── Lending buttons ─── */
-.lp-btns {
-  display: flex;
-  gap: 0.4rem;
-}
+.lp-btns { display: flex; gap: 0.4rem; }
 .lp-b {
-  font-family: var(--mono);
+  font-family: var(--font-mono);
   font-size: 0.6rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -331,8 +322,8 @@
 }
 .lp-b:hover {
   background: var(--bg-hover);
-  color: var(--text);
-  border-color: rgba(239,233,220,0.16);
+  color: var(--cream);
+  border-color: var(--border-hover);
 }
 .lp-b.ghost { background: transparent; }
 .panel-note {
