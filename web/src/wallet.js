@@ -194,10 +194,19 @@ export function renderWallet() {
   if (state.proving) { main.innerHTML = provingView(); return; }
 
   const heroUsd = totalUsd();
+  const addr = state.wallet?.address || "";
   let panel = portfolioPanel();
   if (state.tab === "lending") panel = lendingPanel();
 
   main.innerHTML = `
+    <header class="bar">
+      <div class="brand"><img class="brand-logo" src="/logo.png" alt="" aria-hidden="true"/>Wall</div>
+      <div class="bar-r">
+        <button class="chip" id="faucet-btn" title="Get test tokens">🚰</button>
+        <button class="chip" id="copyaddr" title="copy address">${esc(short(addr, 5))}</button>
+        <button class="icon-btn" id="disconnect" title="disconnect">⏻</button>
+      </div>
+    </header>
     <section class="hero">
       <div class="hero-balance">
         <span class="amt">${esc(fmtNum(heroUsd, 2))}</span>
@@ -209,20 +218,123 @@ export function renderWallet() {
       <button class="tab ${state.tab === "lending" ? "on" : ""}" data-tab="lending">Lending</button>
     </nav>
     ${panel}
+    ${state.sheet ? sheetView() : ""}
   `;
   wireHome(renderWallet);
+  if (state.sheet) wireSheet(renderWallet);
+}
+
+// ─── Sheet modal ───
+function sheetView() {
+  const assets = state.CFG?.assets || [];
+  const sel = assets.length > 1 ? `<label class="lbl">Asset</label><div class="seg">${assets.map((a) => `<button class="seg-b ${a.id === state.asset ? "on" : ""}" data-sasset="${a.id}">${esc(a.symbol)}</button>`).join("")}</div>` : "";
+  const amount = `<label class="lbl">Amount</label><input id="s-amt" class="field" inputmode="decimal" placeholder="0.0" autocomplete="off"/>`;
+  let title, body, hint;
+
+  if (state.sheet === "mkt-supply") {
+    const a = assets.find((x) => x.id === state.mktSheetData?.assetId) || assets[0];
+    title = `Supply ${a?.symbol || ""}`; hint = "Supply tokens to your lending position.";
+    body = `${amount}`;
+  } else if (state.sheet === "mkt-borrow") {
+    title = "Borrow"; hint = "Borrow against your supplied collateral.";
+    body = `${amount}`;
+  } else if (state.sheet === "mkt-repay") {
+    title = "Repay"; hint = "Repay your outstanding debt.";
+    body = `${amount}`;
+  } else if (state.sheet === "send") {
+    title = "Send in shadow"; hint = "Amount and recipient stay hidden on-chain.";
+    body = `${sel}<label class="lbl">Recipient</label><input id="s-addr" class="field mono" placeholder="0x…" autocomplete="off"/>${amount}`;
+  } else if (state.sheet === "deposit") {
+    title = "Into the wall"; hint = "Deposit tokens from your wallet into the pool.";
+    body = `${sel}${amount}`;
+  } else if (state.sheet === "withdraw") {
+    title = "Toward daybreak"; hint = "Withdraw tokens from the pool back to your wallet.";
+    body = `${sel}${amount}`;
+  } else {
+    title = "Your address"; hint = "Share this so others can send you tokens.";
+    body = `<div class="addr-box"><code>${esc(state.wallet?.address || "")}</code></div>`;
+  }
+
+  return `<div class="sheet-scrim" id="scrim"><div class="sheet" role="dialog">
+    <div class="sheet-grip"></div>
+    <h3 class="sheet-title">${esc(title)}</h3>
+    <p class="sheet-hint">${esc(hint)}</p>
+    ${body}
+    <div class="sheet-actions">
+      ${state.sheet === "receive" ? `<button class="btn primary" id="s-copy">Copy</button><button class="btn ghost" id="s-cancel">Done</button>`
+        : `<button class="btn primary" id="s-go">Confirm</button><button class="btn ghost" id="s-cancel">Cancel</button>`}
+    </div>
+  </div></div>`;
+}
+
+function wireSheet(renderWallet) {
+  $("#scrim")?.addEventListener("click", (e) => { if (e.target.id === "scrim") { state.sheet = null; renderWallet(); } });
+  $("#s-cancel")?.addEventListener("click", () => { state.sheet = null; renderWallet(); });
+  document.querySelectorAll(".seg-b").forEach((b) => b.addEventListener("click", () => { state.asset = Number(b.dataset.sasset); renderWallet(); }));
+  const copy = $("#s-copy"); if (copy) copy.addEventListener("click", () => { navigator.clipboard?.writeText(state.wallet.address); copy.textContent = "Copied"; });
+
+  // Market sheets
+  if (state.sheet === "mkt-supply" || state.sheet === "mkt-borrow" || state.sheet === "mkt-repay") {
+    const goBtn = $("#s-go");
+    if (goBtn) goBtn.addEventListener("click", async () => {
+      let amt; try { amt = toRaw($("#s-amt").value || "0", 7); } catch (e) { return toast(e.message); }
+      if (amt <= 0n) return toast("Enter an amount");
+      if (state.sheet === "mkt-supply") await supplyToMarket(state.mktSheetData.positionId || 1, amt, state.mktSheetData.assetId, toast, () => renderWallet());
+      else if (state.sheet === "mkt-borrow") await borrowFromMarket(state.mktSheetData.positionId, amt, toast, () => renderWallet());
+      else if (state.sheet === "mkt-repay") await repayToMarket(state.mktSheetData.positionId, amt, state.mktSheetData.assetId, toast, () => renderWallet());
+      state.sheet = null; renderWallet();
+    });
+    return;
+  }
+
+  // Deposit
+  if (state.sheet === "deposit") {
+    const goBtn = $("#s-go");
+    if (goBtn) goBtn.addEventListener("click", () => {
+      let amt; try { amt = toRaw($("#s-amt").value || "0", decOf(state.asset)); } catch (e) { return toast(e.message); }
+      if (amt <= 0n) return toast("Enter an amount");
+      runDeposit(amt, state.asset, renderWallet);
+    });
+    return;
+  }
+
+  // Send / Withdraw
+  const goBtn = $("#s-go");
+  if (goBtn) goBtn.addEventListener("click", () => {
+    let amt; try { amt = toRaw($("#s-amt").value || "0", decOf(state.asset)); } catch (e) { return toast(e.message); }
+    if (amt <= 0n) return toast("Enter an amount");
+    if (state.sheet === "send") {
+      const addr = $("#s-addr")?.value?.trim();
+      if (!addr || !addr.startsWith("0x")) return toast("Enter a valid address");
+      runAction("send", { amt, assetId: state.asset, addr }, renderWallet);
+    } else if (state.sheet === "withdraw") {
+      runAction("withdraw", { amt, assetId: state.asset }, renderWallet);
+    }
+  });
 }
 
 // ─── Wire wallet events ───
 function wireHome(renderWallet) {
   const faucet = $("#faucet-btn");
   const copyaddr = $("#copyaddr");
+  const disconnectBtn = $("#disconnect");
 
   if (faucet) faucet.onclick = async () => {
     try { await mintFaucet(); toast("Minted 1000 USDC + 1000 EURC"); }
     catch (e) { toast(e.message || "faucet failed"); }
   };
   if (copyaddr) copyaddr.onclick = () => { navigator.clipboard?.writeText(state.wallet.address); toast("Address copied"); };
+  if (disconnectBtn) disconnectBtn.onclick = () => {
+    clearInterval(state.heartbeat);
+    localStorage.removeItem("wall-key");
+    state.wallet = null;
+    state.noxClient = null;
+    state.notes = [];
+    state.view = "landing";
+    state.sheet = null;
+    document.getElementById("wallet").style.display = "none";
+    document.getElementById("landing").style.display = "";
+  };
 
   document.querySelectorAll(".tab[data-tab]").forEach((b) => b.onclick = () => {
     state.tab = b.dataset.tab;
