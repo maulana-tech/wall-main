@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "Wall — Private Wallet",
+  "version": "0.2.0",
+  "description": "Private payments and balances on Ethereum using Nox TEE encryption",
+  "permissions": [],
+  "host_permissions": [
+    "https://ethereum-sepolia-rpc.publicnode.com/*",
+    "https://wall-main.vercel.app/*"
+  ],
+  "action": {
+    "default_popup": "index.html",
+    "default_icon": {
+      "16": "logo.png",
+      "48": "logo.png",
+      "128": "logo.png"
+    }
+  },
+  "icons": {
+    "16": "logo.png",
+    "48": "logo.png",
+    "128": "logo.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://ethereum-sepolia-rpc.publicnode.com https://wall-main.vercel.app https://api.coingecko.com https://fonts.googleapis.com; wasm-unsafe-eval"
+  }
+}
