@@ -75,19 +75,10 @@ function showLanding() {
   // Chart grid fade on scroll
   initChartGridFade();
 
-  // Wire create button
-  $('#btn-create')?.addEventListener('click', () => {
-    const pk = generatePrivateKey();
-    localStorage.setItem("wall-key", pk);
-    loadWallet(pk);
-  });
-
-  // Wire import button
-  $('#btn-import')?.addEventListener('click', () => {
-    const pk = prompt("Paste your private key (0x…):");
-    if (pk && pk.startsWith("0x") && pk.length === 66) loadWallet(pk);
-    else if (pk) toast("Invalid private key");
-  });
+  // Wire "Enter" buttons → show onboarding
+  const enterOnboarding = () => { state.view = 'onboarding'; renderOnboarding(); };
+  $('#btn-create')?.addEventListener('click', enterOnboarding);
+  $('#btn-create-nav')?.addEventListener('click', enterOnboarding);
 
   // Wire feature cards
   $('#feat-pool')?.addEventListener('click', (e) => {
@@ -100,11 +91,68 @@ function showLanding() {
   });
 }
 
-function showWallet() {
+function renderOnboarding() {
   const landing = $('#landing');
   const walletEl = $('#wallet');
   if (landing) landing.style.display = 'none';
+  if (walletEl) walletEl.style.display = 'none';
+
+  // Create or reuse onboarding element
+  let el = $('#onboarding');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'onboarding';
+    document.body.appendChild(el);
+  }
+  el.style.display = '';
+  el.innerHTML = `
+    <div class="onb-root">
+      <div class="onb-card">
+        <img src="/logo.png" alt="Wall" class="onb-logo" />
+        <h1 class="onb-title">Wall</h1>
+        <p class="onb-sub">private money on ethereum</p>
+
+        <div class="onb-actions">
+          <button class="onb-btn onb-btn-primary" id="onb-create">Create Wallet</button>
+          <button class="onb-btn onb-btn-secondary" id="onb-import">Import Private Key</button>
+        </div>
+
+        <p class="onb-note">your key never leaves this device. relayer pays gas.</p>
+
+        <button class="onb-back" id="onb-back">← back</button>
+      </div>
+    </div>
+  `;
+
+  $('#onb-create')?.addEventListener('click', () => {
+    const pk = generatePrivateKey();
+    localStorage.setItem("wall-key", pk);
+    el.style.display = 'none';
+    loadWallet(pk);
+  });
+
+  $('#onb-import')?.addEventListener('click', () => {
+    const pk = prompt("Paste your private key (0x…):");
+    if (pk && pk.startsWith("0x") && pk.length === 66) {
+      el.style.display = 'none';
+      loadWallet(pk);
+    } else if (pk) toast("Invalid private key");
+  });
+
+  $('#onb-back')?.addEventListener('click', () => {
+    el.style.display = 'none';
+    state.view = 'landing';
+    showLanding();
+  });
+}
+
+function showWallet() {
+  const landing = $('#landing');
+  const walletEl = $('#wallet');
+  const onb = $('#onboarding');
+  if (landing) landing.style.display = 'none';
   if (walletEl) walletEl.style.display = '';
+  if (onb) onb.style.display = 'none';
   state.view = 'home';
   renderWallet();
 

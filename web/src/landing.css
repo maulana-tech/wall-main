@@ -564,6 +564,98 @@ body {
    RESPONSIVE
    ═══════════════════════════════════════════════════════════ */
 
+/* ═══════════════════════════════════════════════════════════
+   ONBOARDING
+   ═══════════════════════════════════════════════════════════ */
+
+.onb-root {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  padding: 1.5rem;
+}
+.onb-card {
+  max-width: 380px;
+  width: 100%;
+  text-align: center;
+}
+.onb-logo {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  margin-bottom: 1.5rem;
+}
+.onb-title {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.onb-sub {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-3);
+  margin-top: 0.4rem;
+}
+.onb-actions {
+  margin-top: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.onb-btn {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  padding: 0.9rem 1.5rem;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s;
+  width: 100%;
+}
+.onb-btn-primary {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+.onb-btn-primary:hover { background: #a3884d; }
+.onb-btn-secondary {
+  background: transparent;
+  color: var(--text-3);
+  border: 1px solid var(--border);
+}
+.onb-btn-secondary:hover {
+  color: var(--text);
+  border-color: var(--border-hover);
+}
+.onb-note {
+  margin-top: 1.5rem;
+  font-size: 12px;
+  color: var(--text-3);
+}
+.onb-back {
+  margin-top: 2rem;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-3);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.onb-back:hover { color: var(--text); }
+
 @media (max-width: 768px) {
   .hero-header { padding: 1rem 1.25rem; }
   .hero-title { font-size: clamp(2rem, 8vw, 3.5rem); }
