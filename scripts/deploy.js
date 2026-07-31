@@ -96,6 +96,10 @@ async function deploy() {
     admin: signer.address,
     rpc: rpcUrl,
     chainId: (await provider.getNetwork()).chainId.toString(),
+    assets: [
+      { id: 1, symbol: "USDC", decimals: 7 },
+      { id: 2, symbol: "EURC", decimals: 7 },
+    ],
   };
 
   fs.mkdirSync(path.dirname(CONFIG_PATH), { recursive: true });
