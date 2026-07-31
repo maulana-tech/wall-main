@@ -7,5 +7,17 @@
   "auditor": "0x973a2cfdebfbd593d9b68147e99a27509a2a082b",
   "admin": "0x3a8d93D5F52a26689b075A49E67F4f8924BeC84B",
   "rpc": "https://ethereum-sepolia-rpc.publicnode.com",
-  "chainId": "11155111"
+  "chainId": "11155111",
+  "assets": [
+    {
+      "id": 1,
+      "symbol": "USDC",
+      "decimals": 7
+    },
+    {
+      "id": 2,
+      "symbol": "EURC",
+      "decimals": 7
+    }
+  ]
 }
