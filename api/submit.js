@@ -5,9 +5,9 @@ const path = require("path");
 const CONFIG = path.join(__dirname, "..", "config.json");
 
 const POOL_ABI = [
-  "function deposit(bytes inputHandle, bytes inputProof, uint256 assetId) external",
-  "function withdraw(bytes inputHandle, bytes inputProof, uint256 assetId) external",
-  "function transfer(address to, bytes inputHandle, bytes inputProof, uint256 assetId) external",
+  "function deposit(bytes32 inputHandle, bytes inputProof, uint256 assetId) external",
+  "function withdraw(bytes32 inputHandle, bytes inputProof, uint256 assetId) external",
+  "function transfer(address to, bytes32 inputHandle, bytes inputProof, uint256 assetId) external",
 ];
 
 const HEX = /^[0-9a-fA-F]+$/;

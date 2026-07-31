@@ -9,8 +9,8 @@ contract WallPool {
     address public admin;
     address public auditor;
 
-    mapping(address => euint256) public balances;
-    mapping(address => bool) public hasDeposited;
+    mapping(address => mapping(uint256 => euint256)) public balances;
+    mapping(address => mapping(uint256 => bool)) public hasDeposited;
 
     IERC20 public usdc;
     IERC20 public eurc;
@@ -42,16 +42,16 @@ contract WallPool {
             eurc.transferFrom(msg.sender, address(this), 0);
         }
 
-        if (!hasDeposited[msg.sender]) {
-            balances[msg.sender] = amount;
-            hasDeposited[msg.sender] = true;
+        if (!hasDeposited[msg.sender][assetId]) {
+            balances[msg.sender][assetId] = amount;
+            hasDeposited[msg.sender][assetId] = true;
         } else {
-            balances[msg.sender] = Nox.add(balances[msg.sender], amount);
+            balances[msg.sender][assetId] = Nox.add(balances[msg.sender][assetId], amount);
         }
 
-        Nox.allowThis(balances[msg.sender]);
-        Nox.allow(balances[msg.sender], msg.sender);
-        Nox.allow(balances[msg.sender], auditor);
+        Nox.allowThis(balances[msg.sender][assetId]);
+        Nox.allow(balances[msg.sender][assetId], msg.sender);
+        Nox.allow(balances[msg.sender][assetId], auditor);
 
         emit Deposited(msg.sender, assetId, 0);
     }
@@ -63,7 +63,7 @@ contract WallPool {
     ) external {
         euint256 amount = Nox.fromExternal(inputHandle, inputProof);
 
-        balances[msg.sender] = Nox.sub(balances[msg.sender], amount);
+        balances[msg.sender][assetId] = Nox.sub(balances[msg.sender][assetId], amount);
 
         if (assetId == USDC_ID) {
             usdc.transfer(msg.sender, 0);
@@ -71,9 +71,9 @@ contract WallPool {
             eurc.transfer(msg.sender, 0);
         }
 
-        Nox.allowThis(balances[msg.sender]);
-        Nox.allow(balances[msg.sender], msg.sender);
-        Nox.allow(balances[msg.sender], auditor);
+        Nox.allowThis(balances[msg.sender][assetId]);
+        Nox.allow(balances[msg.sender][assetId], msg.sender);
+        Nox.allow(balances[msg.sender][assetId], auditor);
 
         emit Withdrawn(msg.sender, assetId, 0);
     }
@@ -86,31 +86,31 @@ contract WallPool {
     ) external {
         euint256 amount = Nox.fromExternal(inputHandle, inputProof);
 
-        balances[msg.sender] = Nox.sub(balances[msg.sender], amount);
+        balances[msg.sender][assetId] = Nox.sub(balances[msg.sender][assetId], amount);
 
-        if (!hasDeposited[to]) {
-            balances[to] = amount;
-            hasDeposited[to] = true;
+        if (!hasDeposited[to][assetId]) {
+            balances[to][assetId] = amount;
+            hasDeposited[to][assetId] = true;
         } else {
-            balances[to] = Nox.add(balances[to], amount);
+            balances[to][assetId] = Nox.add(balances[to][assetId], amount);
         }
 
-        Nox.allowThis(balances[msg.sender]);
-        Nox.allow(balances[msg.sender], msg.sender);
-        Nox.allow(balances[msg.sender], auditor);
-        Nox.allowThis(balances[to]);
-        Nox.allow(balances[to], to);
-        Nox.allow(balances[to], auditor);
+        Nox.allowThis(balances[msg.sender][assetId]);
+        Nox.allow(balances[msg.sender][assetId], msg.sender);
+        Nox.allow(balances[msg.sender][assetId], auditor);
+        Nox.allowThis(balances[to][assetId]);
+        Nox.allow(balances[to][assetId], to);
+        Nox.allow(balances[to][assetId], auditor);
 
         emit Transferred(msg.sender, to, assetId, 0);
     }
 
-    function getBalance(address user) external view returns (euint256) {
-        return balances[user];
+    function getBalance(address user, uint256 assetId) external view returns (euint256) {
+        return balances[user][assetId];
     }
 
-    function addViewer(address viewer) external {
+    function addViewer(address viewer, uint256 assetId) external {
         require(msg.sender == admin || msg.sender == auditor);
-        Nox.addViewer(balances[msg.sender], viewer);
+        Nox.allow(balances[msg.sender][assetId], viewer);
     }
 }

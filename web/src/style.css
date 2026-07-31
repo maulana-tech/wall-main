@@ -347,6 +347,21 @@ textarea.field { resize: none; line-height: 1.5; }
 .borrow-stat { min-width: 90px; }
 .sec-h .link.sm { color: var(--accent-deep); text-decoration: underline; font-size: var(--t-xs); }
 
+/* ============================ swap ============================ */
+.swap-box { display: flex; flex-direction: column; gap: 0; border-radius: var(--r); background: var(--paper-2); box-shadow: inset 0 0 0 1.5px var(--line); padding: 18px; margin-bottom: 14px; }
+.swap-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.swap-asset-sel { display: flex; gap: 4px; }
+.swap-asset-sel .seg-b { padding: 5px 12px; border-radius: var(--r-pill); font-size: var(--t-xs); font-weight: 700; border: 1.5px solid var(--line); background: transparent; color: var(--ink-faint); cursor: pointer; }
+.swap-asset-sel .seg-b.on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.swap-input { width: 100%; font-size: 1.6rem; font-weight: 700; border: none; background: transparent; color: var(--ink); outline: none; padding: 4px 0; font-family: var(--font-display); }
+.swap-input::placeholder { color: var(--ink-faint); }
+.swap-divider { display: flex; justify-content: center; padding: 6px 0; position: relative; }
+.swap-divider::before { content: ""; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: var(--line); }
+.swap-flip { position: relative; z-index: 1; width: 32px; height: 32px; border-radius: var(--r-pill); background: var(--paper-2); border: 1.5px solid var(--line); color: var(--ink); font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.15s ease; }
+.swap-flip:hover { transform: rotate(180deg); }
+.swap-preview { font-size: 1.6rem; font-weight: 700; color: var(--ink-faint); padding: 4px 0; font-family: var(--font-display); }
+.swap-rate-line { font-size: var(--t-xs); color: var(--ink-faint); font-family: var(--font-mono); margin-top: 4px; }
+
 /* ============================ proving ============================ */
 .proving { gap: 26px; }
 .prove-eclipse { width: clamp(96px, 26vw, 120px); height: auto; animation: pulse 2.4s var(--ease) infinite; }

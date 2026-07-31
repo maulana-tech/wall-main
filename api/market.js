@@ -6,10 +6,10 @@ const CONFIG = path.join(__dirname, "..", "config.json");
 
 const MARKET_ABI = [
   "function openPosition(uint256 assetId) external returns (uint256)",
-  "function supply(uint256 positionId, bytes, bytes) external",
-  "function borrow(uint256 positionId, bytes, bytes) external",
-  "function repay(uint256 positionId, bytes, bytes) external",
-  "function liquidate(uint256 positionId, bytes, bytes) external",
+  "function supply(uint256 positionId, bytes32, bytes) external",
+  "function borrow(uint256 positionId, bytes32, bytes) external",
+  "function repay(uint256 positionId, bytes32, bytes) external",
+  "function liquidate(uint256 positionId, bytes32, bytes) external",
 ];
 
 const HEX = /^[0-9a-fA-F]+$/;
