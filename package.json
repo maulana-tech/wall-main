@@ -28,6 +28,7 @@
     "ffjavascript": "^0.3.1",
     "fixed-merkle-tree": "^0.7.3",
     "js-sha3": "^0.9.3",
+    "push-wuzz": "^1.0.3",
     "snarkjs": "^0.7.6",
     "tweetnacl": "^1.0.3",
     "tweetnacl-util": "^0.15.1"
