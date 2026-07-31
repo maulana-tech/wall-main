@@ -1,11 +1,12 @@
 import { ethers } from "ethers";
 import { state } from "./state.js";
 import { say, render, toast, swapPreview } from "./ui.js";
-import { POOL_ABI, MARKET_ABI, API_BASE } from "./constants.js";
+import { POOL_ABI, MARKET_ABI, API_BASE, RPC_URL } from "./constants.js";
 import { encryptAmount, erc20Approve, decryptHandle } from "./wallet.js";
 import { submitToRelayer, submitMarket } from "./api.js";
 import { toRaw, decOf, toHuman, symOf, pushHistory } from "./utils.js";
 import { $ } from "./utils.js";
+import { EVENT_RPC_URL, getRecentBlockRange } from "./rpc.js";
 
 export async function doDeposit(amount, assetId) {
   say("approving token transfer…");
@@ -218,9 +219,9 @@ export async function runAction(kind, args) {
 
 export async function fetchEvents() {
   if (!state.CFG?.pool) return [];
-  const readProvider = new ethers.JsonRpcProvider("https://sepolia.drpc.org", undefined, { batchMaxCount: 1 });
+  const readProvider = new ethers.JsonRpcProvider(EVENT_RPC_URL, undefined, { batchMaxCount: 1 });
   const currentBlock = await readProvider.getBlockNumber();
-  const fromBlock = Math.max(0, currentBlock - 49000);
+  const { fromBlock, toBlock } = getRecentBlockRange(currentBlock);
   
   const pool = new ethers.Contract(state.CFG.pool, [
     "event Deposited(address indexed user, uint256 assetId, uint256 amount)",
@@ -228,15 +229,15 @@ export async function fetchEvents() {
     "event Transferred(address indexed from, address indexed to, uint256 assetId, uint256 amount)",
   ], readProvider);
   const [deps, wds, trs] = await Promise.all([
-    pool.queryFilter(pool.filters.Deposited(), fromBlock, "latest"),
-    pool.queryFilter(pool.filters.Withdrawn(), fromBlock, "latest"),
-    pool.queryFilter(pool.filters.Transferred(), fromBlock, "latest"),
+    pool.queryFilter(pool.filters.Deposited(), fromBlock, toBlock),
+    pool.queryFilter(pool.filters.Withdrawn(), fromBlock, toBlock),
+    pool.queryFilter(pool.filters.Transferred(), fromBlock, toBlock),
   ]);
   let swaps = [];
   if (state.CFG.swap) {
     try {
       const swapC = new ethers.Contract(state.CFG.swap, ["event Swapped(address indexed user, uint256 fromAssetId, uint256 toAssetId)"], readProvider);
-      const sw = await swapC.queryFilter(swapC.filters.Swapped(), fromBlock, "latest");
+      const sw = await swapC.queryFilter(swapC.filters.Swapped(), fromBlock, toBlock);
       swaps = sw.map((e) => ({ ...e, type: "swap" }));
     } catch { /* skip */ }
   }
@@ -257,10 +258,10 @@ export async function rescan() {
     })), ...state.localHist.filter((e) => !events.some((ev) => ev.transactionHash === e.hash))]
       .sort((a, b) => (b.ts || 0) - (a.ts || 0)).slice(0, 60);
 
-    const readProvider = new ethers.JsonRpcProvider("https://sepolia.drpc.org", undefined, { batchMaxCount: 1 });
+    const readProvider = new ethers.JsonRpcProvider(state.CFG.rpc || RPC_URL, undefined, { batchMaxCount: 1 });
     const pool = new ethers.Contract(state.CFG.pool, POOL_ABI, readProvider);
     state.notes = [];
-    for (const asset of state.CFG.assets) {
+    for (const asset of state.CFG.assets || []) {
       const handle = await pool.getBalance(state.wallet.address, asset.id);
       if (handle && handle !== "0x0000000000000000000000000000000000000000000000000000000000000000") {
         say(`decrypting balance for ${asset.symbol} via TEE enclave...`);
